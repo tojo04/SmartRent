@@ -4,12 +4,14 @@
   "main": ".eslintrc.js",
   "scripts": {
     "start": "node src/main.js",
+
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/main.js",
     "seed:admin": "node scripts/seed-admin.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio"
+
   },
   "keywords": [],
   "author": "",

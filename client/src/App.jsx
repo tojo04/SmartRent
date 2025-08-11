@@ -7,6 +7,13 @@ import SignupPage from './App/auth/signup/page';
 import DashboardPage from './pages/DashBoardPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 
+// Admin Components
+import AdminLayout from './App/admin/layout';
+import AdminDashboard from './App/admin/dashboard/page';
+import AdminUsers from './App/admin/users/page';
+import AdminProducts from './App/admin/products/page';
+import AdminOrders from './App/admin/orders/page';
+
 function App() {
   return (
     <AuthProvider>
@@ -32,16 +39,19 @@ function App() {
             
             {/* Admin only routes */}
             <Route
-              path="/admin/*"
+              path="/admin"
               element={
                 <ProtectedRoute requiredRole="admin">
-                  <div className="p-8 text-center">
-                    <h1 className="text-2xl font-bold">Admin Panel</h1>
-                    <p className="text-gray-600 mt-2">Admin features coming soon...</p>
-                  </div>
+                  <AdminLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="orders" element={<AdminOrders />} />
+            </Route>
             
             {/* Default redirect */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
