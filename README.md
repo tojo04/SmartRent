@@ -154,7 +154,7 @@ The system supports **hourly, daily, weekly, and monthly rentals** with customiz
 - **jsonwebtoken (JWT)** for authentication
 - **multer** for image uploads (disk or S3)
 - **Razorpay** for payments
-- **nodemailer** for email notifications
+- **nodemailer** for email notifications (set `GMAIL_USER` and `GMAIL_PASS` env vars for OTP)
 - **node-cron** for scheduled reminders (skip Redis for hackathon)
 
 ---
