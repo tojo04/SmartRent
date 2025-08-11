@@ -4,14 +4,12 @@
   "main": ".eslintrc.js",
   "scripts": {
     "start": "node src/main.js",
-
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/main.js",
     "seed:admin": "node scripts/seed-admin.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio"
-
   },
   "keywords": [],
   "author": "",
@@ -26,14 +24,11 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.0.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.17.1"
+    "mongoose": "^8.17.1",
+    "nodemailer": "^6.10.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
     "prisma": "^6.13.0"
   }
 }
-
-
-
-
