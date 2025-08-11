@@ -8,6 +8,7 @@ import VerifyEmailPage from './App/auth/verify-email/page';
 import ForgotPasswordPage from './App/auth/forgot-password/page';
 import DashboardPage from './pages/DashBoardPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
+import RentalsPage from './App/customer/rentals/page';
 
 // Admin Components
 import AdminLayout from './App/admin/layout';
@@ -37,6 +38,16 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Customer routes */}
+            <Route
+              path="/rentals"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <RentalsPage />
                 </ProtectedRoute>
               }
             />

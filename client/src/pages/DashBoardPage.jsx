@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const DashboardPage = () => {
@@ -67,6 +67,22 @@ const DashboardPage = () => {
               <p className="text-neutral-600 mb-6 text-lg">
                 Your rental management platform is ready to use.
               </p>
+              
+              {/* Quick Actions for Customer */}
+              {user?.role === 'customer' && (
+                <div className="mb-6">
+                  <Link
+                    to="/rentals"
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    Manage Rentals
+                  </Link>
+                </div>
+              )}
+              
               <div className="space-y-3 text-neutral-600">
                 <div className="flex items-center justify-center space-x-2">
                   <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
