@@ -31,7 +31,8 @@ const isAuthEndpoint = (url = '') =>
 let refreshInFlight = null;
 const runRefreshOnce = async () => {
   if (!refreshInFlight) {
-    refreshInFlight = api.post('/auth/refresh')
+    const persist = localStorage.getItem('sr_remember') === '1';
+    refreshInFlight = api.post('/auth/refresh', { persist })
       .then(res => {
         const newToken = res.data?.accessToken || null;
         setAccessToken(newToken);
@@ -79,7 +80,10 @@ export const authAPI = {
   register: (body) => api.post('/auth/register', body).then(r => r.data),
   logout: () => api.post('/auth/logout').then(r => r.data),
   me:     () => api.get('/auth/me').then(r => r.data),
-  refresh: () => api.post('/auth/refresh').then(r => r.data), // safe now (interceptor skips it)
+  refresh: () => {
+    const persist = localStorage.getItem('sr_remember') === '1';
+    return api.post('/auth/refresh', { persist }).then(r => r.data);
+  }, // safe now (interceptor skips it)
 };
 
 export default api;

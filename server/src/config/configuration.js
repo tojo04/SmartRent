@@ -32,8 +32,13 @@ export const config = {
   },
   cookies: {
     name: process.env.COOKIE_NAME || 'rt',
-    secure: process.env.COOKIE_SECURE === 'true',
-    sameSite: process.env.COOKIE_SAME_SITE || 'lax'
+    // Default to secure cookies only in production unless explicitly overridden
+    secure: process.env.COOKIE_SECURE
+      ? process.env.COOKIE_SECURE === 'true'
+      : (process.env.NODE_ENV === 'production'),
+    sameSite: process.env.COOKIE_SAME_SITE || 'lax',
+    // Ensure cookie is sent to all routes (so it reaches '/auth' behind '/api' proxy)
+    path: process.env.COOKIE_PATH || '/',
   }
 };
 

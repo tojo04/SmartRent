@@ -34,43 +34,29 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (hasCheckedRef.current) return;
     hasCheckedRef.current = true;
-
+  
     const checkAuth = async () => {
+      dispatch({ type: 'SET_LOADING', payload: true });
+  
       try {
-        // 1) Try to refresh access token using HTTP-only cookie (if present)
-        try {
-          const { accessToken } = await authAPI.refresh();
-          if (accessToken) setAccessToken(accessToken);
-        } catch {
-          // Ignore: user may be first-time visitor without refresh cookie
+        const persist = !!localStorage.getItem('sr_remember');
+  
+        // Try to refresh access token if refresh cookie exists
+        const { accessToken } = await authAPI.refresh({ persist });
+        if (accessToken) {
+          setAccessToken(accessToken);
+          const data = await authAPI.me();
+          dispatch({ type: 'SET_USER', payload: data.user });
+        } else {
+          dispatch({ type: 'SET_USER', payload: null });
         }
-
-        // 2) Ask backend for current user
-        const data = await authAPI.me();
-        dispatch({ type: 'SET_USER', payload: data.user });
-      } catch (error) {
-        // Treat 401/403/429 as unauthenticated without spamming retries
-        const status = error?.response?.status;
-        if (status === 429) {
-          // Soft backoff once to let any rate limiter cool down
-          setTimeout(async () => {
-            try {
-              const data = await authAPI.me();
-              dispatch({ type: 'SET_USER', payload: data.user });
-            } catch {
-              dispatch({ type: 'SET_USER', payload: null });
-            } finally {
-              dispatch({ type: 'SET_LOADING', payload: false });
-            }
-          }, 800);
-          return;
-        }
+      } catch {
         dispatch({ type: 'SET_USER', payload: null });
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
     };
-
+  
     checkAuth();
   }, []);
 
@@ -78,11 +64,17 @@ export const AuthProvider = ({ children }) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
-      
+  
       const data = await authAPI.login(credentials);
       setAccessToken(data.accessToken);
       dispatch({ type: 'SET_USER', payload: data.user });
-      
+  
+      if (credentials.rememberMe) {
+        localStorage.setItem('sr_remember', '1');
+      } else {
+        localStorage.removeItem('sr_remember');
+      }
+  
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
@@ -92,6 +84,7 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
+  
 
   const register = async (userData) => {
     try {

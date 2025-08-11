@@ -1,3 +1,4 @@
+// src/pages/LoginPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -9,6 +10,7 @@ import AuthLayout from '../components/AuthLayout';
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
+  rememberMe: z.boolean().optional().default(false),
 });
 
 const LoginPage = () => {
@@ -23,6 +25,7 @@ const LoginPage = () => {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
+    defaultValues: { rememberMe: false },
   });
 
   // Redirect if already authenticated
@@ -116,12 +119,12 @@ const LoginPage = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <input
-              id="remember-me"
-              name="remember-me"
+              id="rememberMe"
               type="checkbox"
+              {...register('rememberMe')}
               className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded transition-colors duration-200"
             />
-            <label htmlFor="remember-me" className="ml-3 block text-sm text-neutral-700">
+            <label htmlFor="rememberMe" className="ml-3 block text-sm text-neutral-700">
               Remember me
             </label>
           </div>
