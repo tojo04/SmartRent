@@ -4,6 +4,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './App/auth/login/page';
 import SignupPage from './App/auth/signup/page';
+import VerifyEmailPage from './App/auth/verify-email/page';
+import ForgotPasswordPage from './App/auth/forgot-password/page';
 import DashboardPage from './pages/DashBoardPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 
@@ -25,6 +27,8 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/signup" element={<SignupPage />} />
+            <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             
             {/* Protected routes */}
