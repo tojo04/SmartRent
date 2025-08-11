@@ -4,16 +4,19 @@
   "main": ".eslintrc.js",
   "scripts": {
     "start": "node src/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"  ,
-    "dev": "nodemon src/main.js" ,
-    "seed:admin": "node scripts/seed-admin.js"
-
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/main.js",
+    "seed:admin": "node scripts/seed-admin.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.13.0",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -24,8 +27,11 @@
     "mongoose": "^8.17.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prisma": "^6.13.0"
   }
-} 
+}
+
+
 
 
