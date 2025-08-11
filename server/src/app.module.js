@@ -15,7 +15,6 @@ export async function createApp() {
   app.use(express.json());
   app.use(cookieParser());
 
-  // Basic rate limit for auth endpoints
   const limiter = rateLimit({ windowMs: 60_000, max: 60 });
   app.use('/auth', limiter);
 
@@ -26,3 +25,4 @@ export async function createApp() {
 
   return app;
 }
+

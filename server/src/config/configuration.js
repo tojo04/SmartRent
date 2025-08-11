@@ -1,4 +1,3 @@
-// server/src/config/configuration.js
 import 'dotenv/config';
 
 const buildCorsOrigin = () => {
@@ -23,8 +22,8 @@ export const config = {
   jwt: {
     accessSecret: process.env.JWT_ACCESS_SECRET,
     refreshSecret: process.env.JWT_REFRESH_SECRET,
-    accessTtlSec: 60 * 15,          // 15 minutes
-    refreshTtlSec: 60 * 60 * 24 * 7 // 7 days
+    accessTtlSec: 60 * 15,
+    refreshTtlSec: 60 * 60 * 24 * 7
   },
   cors: {
     // Accept env-provided origins, plus common localhost dev ports when not in production.
@@ -34,6 +33,7 @@ export const config = {
   cookies: {
     name: process.env.COOKIE_NAME || 'rt',
     secure: process.env.COOKIE_SECURE === 'true',
-    sameSite: (process.env.COOKIE_SAME_SITE || 'lax'),
+    sameSite: process.env.COOKIE_SAME_SITE || 'lax'
   }
 };
+
