@@ -5,13 +5,14 @@ import { requireAuth, requireRole, optionalRefreshContext } from './auth.middlew
 export const authRouter = Router();
 
 authRouter.post('/register', AuthController.register);
-authRouter.post('/login',    AuthController.login);
+authRouter.post('/login', AuthController.login);
 
-// Current user (requires access token)
-authRouter.get('/me', requireAuth, requireRole('admin','customer'), AuthController.me);
+// requires access token + populates req.user via requireRole
+authRouter.get('/me', requireAuth, requireRole('admin', 'customer'), AuthController.me);
 
-// Refresh (no access token needed, uses refresh cookie)
+// works even if access token expired (cookie + optionalRefreshContext)
 authRouter.post('/refresh', optionalRefreshContext, AuthController.refresh);
 
-// Logout (clears cookie, invalidates refresh server-side if possible)
-authRouter.post('/logout', requireAuth, AuthController.logout);
+// ensure we can still resolve user via refresh context if access token expired
+authRouter.post('/logout', optionalRefreshContext, requireAuth, AuthController.logout);
+

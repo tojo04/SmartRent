@@ -29,16 +29,12 @@ export function requireRole(...roles) {
         return res.status(403).json({ message: 'Forbidden' });
       }
       next();
-    } catch (e) {
+    } catch {
       res.status(500).json({ message: 'Auth error' });
     }
   };
 }
 
-/**
- * Attach userIdFromRefresh if refresh cookie is present & valid.
- * Lets /auth/refresh work even when access token expired.
- */
 export function optionalRefreshContext(req, _res, next) {
   try {
     const rtCookie = req.cookies?.[config.cookies.name];
@@ -50,3 +46,4 @@ export function optionalRefreshContext(req, _res, next) {
   }
   next();
 }
+
