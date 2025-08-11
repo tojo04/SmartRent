@@ -128,18 +128,6 @@ const ConfirmedRentalForm = ({ order }) => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price List:</label>
-              <div className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900">
-                {order.priceList}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Rental Period:</label>
-              <div className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900">
-                {order.rentalPeriod}
-              </div>
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Rental Duration:</label>
               <div className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900">
                 {order.rentalDuration}
@@ -193,7 +181,7 @@ const ConfirmedRentalForm = ({ order }) => {
                     <td className="px-4 py-2 bg-gray-50">{item.product}</td>
                     <td className="px-4 py-2 bg-gray-50">{item.quantity}</td>
                     <td className="px-4 py-2 bg-gray-50">{item.unitPrice}</td>
-                    <td className="px-4 py-2 bg-gray-50">{item.tax}</td>
+                    <td className="px-4 py-2 bg-gray-50">{Number(item.tax).toFixed(2)}</td>
                     <td className="px-4 py-2 bg-gray-50 font-medium">{item.subTotal}</td>
                   </tr>
                 ))}

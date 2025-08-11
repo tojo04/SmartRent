@@ -15,22 +15,21 @@ const RentalsPage = () => {
       rentalTemplate: 'Standard Rental',
       expiration: '2024-02-15',
       rentalOrderDate: '2024-01-15',
-      priceList: 'Standard',
-      rentalPeriod: '30 days',
-      rentalDuration: '1 month',
+      rentalDuration: '1 months, 0 days, 0 hours',
       items: [
         {
           product: 'Product 1',
           quantity: 5,
           unitPrice: 200,
-          tax: 0,
-          subTotal: 1000
+          subTotal: 1000,
+          tax: 1000 * 0.18
         }
       ],
-      termsConditions: 'Standard terms and conditions apply for this rental agreement.',
+      termsConditions:
+        'Extra charges apply for late return. Equipment must be returned in its original condition.',
       untaxedTotal: 1000,
-      tax: 0,
-      total: 1000,
+      tax: 1000 * 0.18,
+      total: 1000 + 1000 * 0.18,
       status: 'confirmed',
       deliveryStatus: '2. Delivery'
     }

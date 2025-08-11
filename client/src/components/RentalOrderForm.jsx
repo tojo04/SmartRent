@@ -9,20 +9,21 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
     rentalTemplate: 'Standard Rental',
     expiration: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
     rentalOrderDate: format(new Date(), 'yyyy-MM-dd'),
-    priceList: 'Standard',
-    rentalPeriod: '30 days',
-    rentalDuration: '1 month',
+    rentalDuration: { months: 0, days: 0, hours: 0 },
     items: [
       {
         product: 'Product 1',
         quantity: 5,
         unitPrice: 200,
-        tax: 0,
+        tax: 200 * 5 * 0.18,
         subTotal: 1000
       }
     ],
-    termsConditions: 'Standard terms and conditions apply for this rental agreement.'
+    termsConditions:
+      'Extra charges apply for late return. Equipment must be returned in its original condition.'
   });
+
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -31,18 +32,26 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
     }));
   };
 
+  const handleDurationChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      rentalDuration: { ...prev.rentalDuration, [field]: Number(value) }
+    }));
+  };
+
   const handleItemChange = (index, field, value) => {
     const updatedItems = [...formData.items];
     updatedItems[index] = {
       ...updatedItems[index],
-      [field]: field === 'quantity' || field === 'unitPrice' || field === 'tax' ? Number(value) : value
+      [field]: field === 'quantity' || field === 'unitPrice' ? Number(value) : value
     };
-    
-    // Recalculate subtotal
+
     if (field === 'quantity' || field === 'unitPrice') {
-      updatedItems[index].subTotal = updatedItems[index].quantity * updatedItems[index].unitPrice;
+      const subTotal = updatedItems[index].quantity * updatedItems[index].unitPrice;
+      updatedItems[index].subTotal = subTotal;
+      updatedItems[index].tax = subTotal * 0.18;
     }
-    
+
     setFormData(prev => ({
       ...prev,
       items: updatedItems
@@ -52,13 +61,16 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
   const addItem = () => {
     setFormData(prev => ({
       ...prev,
-      items: [...prev.items, {
-        product: `Product ${prev.items.length + 1}`,
-        quantity: 1,
-        unitPrice: 100,
-        tax: 0,
-        subTotal: 100
-      }]
+      items: [
+        ...prev.items,
+        {
+          product: `Product ${prev.items.length + 1}`,
+          quantity: 1,
+          unitPrice: 100,
+          subTotal: 100,
+          tax: 100 * 0.18
+        }
+      ]
     }));
   };
 
@@ -80,27 +92,20 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
   const { untaxedTotal, tax, total } = calculateTotals();
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    if (!termsAccepted) {
+      alert('Please accept the terms and conditions');
+      return;
+    }
+    const { months, days, hours } = formData.rentalDuration;
+    const rentalDurationStr = `${months} months, ${days} days, ${hours} hours`;
     onCreateOrder({
       ...formData,
+      rentalDuration: rentalDurationStr,
       untaxedTotal,
       tax,
       total
     });
-  };
-
-  const handleUpdatePrices = () => {
-    // Simulate price update
-    const updatedItems = formData.items.map(item => ({
-      ...item,
-      unitPrice: item.unitPrice * 1.1, // 10% increase
-      subTotal: item.quantity * (item.unitPrice * 1.1)
-    }));
-    
-    setFormData(prev => ({
-      ...prev,
-      items: updatedItems
-    }));
   };
 
   return (
@@ -146,14 +151,18 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
             <button className="bg-yellow-400 text-gray-800 px-4 py-1 rounded text-sm font-medium hover:bg-yellow-500">
               Quotation sent →
             </button>
-            <button className="bg-yellow-400 text-gray-800 px-4 py-1 rounded text-sm font-medium hover:bg-yellow-500">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="bg-yellow-400 text-gray-800 px-4 py-1 rounded text-sm font-medium hover:bg-yellow-500"
+            >
               Rental Order →
             </button>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6">
+      <form className="p-6">
         {/* Order ID */}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-gray-900">→R0001</h2>
@@ -226,43 +235,33 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price List:</label>
-              <div className="flex items-center space-x-2">
-                <select
-                  value={formData.priceList}
-                  onChange={(e) => handleInputChange('priceList', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="Standard">Standard</option>
-                  <option value="Premium">Premium</option>
-                  <option value="Discount">Discount</option>
-                </select>
-                <button
-                  type="button"
-                  onClick={handleUpdatePrices}
-                  className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-600"
-                >
-                  Update Prices
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Rental Period:</label>
-              <input
-                type="text"
-                value={formData.rentalPeriod}
-                onChange={(e) => handleInputChange('rentalPeriod', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Rental Duration:</label>
-              <input
-                type="text"
-                value={formData.rentalDuration}
-                onChange={(e) => handleInputChange('rentalDuration', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="grid grid-cols-3 gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.rentalDuration.months}
+                  onChange={(e) => handleDurationChange('months', e.target.value)}
+                  placeholder="Months"
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.rentalDuration.days}
+                  onChange={(e) => handleDurationChange('days', e.target.value)}
+                  placeholder="Days"
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.rentalDuration.hours}
+                  onChange={(e) => handleDurationChange('hours', e.target.value)}
+                  placeholder="Hours"
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -302,7 +301,7 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Product</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Quantity</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Unit Price</th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Tax</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Tax (18%)</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Sub Total</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Actions</th>
                 </tr>
@@ -337,16 +336,7 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
                         step="0.01"
                       />
                     </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="number"
-                        value={item.tax}
-                        onChange={(e) => handleItemChange(index, 'tax', e.target.value)}
-                        className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        min="0"
-                        step="0.01"
-                      />
-                    </td>
+                    <td className="px-4 py-2">{item.tax.toFixed(2)}</td>
                     <td className="px-4 py-2 font-medium">{item.subTotal}</td>
                     <td className="px-4 py-2">
                       <button
@@ -375,12 +365,17 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
         {/* Terms and Conditions */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">Terms & Conditions:</label>
-          <textarea
-            value={formData.termsConditions}
-            onChange={(e) => handleInputChange('termsConditions', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="3"
-          />
+          <p className="text-sm text-gray-600 mb-2">{formData.termsConditions}</p>
+          <label className="inline-flex items-center text-sm text-gray-700">
+            <input
+              type="checkbox"
+              className="mr-2"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              required
+            />
+            I agree to the terms and conditions
+          </label>
         </div>
 
         {/* Totals */}
@@ -401,15 +396,6 @@ const RentalOrderForm = ({ user, onCreateOrder }) => {
           </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Create Rental Order
-          </button>
-        </div>
       </form>
     </div>
   );
