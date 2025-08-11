@@ -1,13 +1,51 @@
-import React, { useState } from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+// src/App/layout.jsx
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';            // <- fixed
+import { authAPI, setAccessToken } from '../lib/api';         // <- fixed
 
 const AdminLayout = () => {
   const location = useLocation();
+  const nav = useNavigate();
   const { user, logout } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navigation = [
+  const [ready, setReady] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const redirectedRef = useRef(false);
+  const mountedRef = useRef(true);
+
+  // Admin guard: refresh -> me -> redirect if not admin
+  useEffect(() => {
+    mountedRef.current = true;
+
+    (async () => {
+      try {
+        const refreshed = await authAPI.refresh().catch(() => ({ accessToken: null }));
+        if (refreshed?.accessToken) setAccessToken(refreshed.accessToken);
+
+        const { user: me } = await authAPI.me();
+        if (me?.role !== 'admin') {
+          if (!redirectedRef.current) {
+            redirectedRef.current = true;
+            const returnTo = encodeURIComponent(location.pathname + location.search);
+            nav(`/login?reason=admin_only&returnTo=${returnTo}`, { replace: true });
+          }
+          return;
+        }
+        if (mountedRef.current) setReady(true);
+      } catch {
+        if (!redirectedRef.current) {
+          redirectedRef.current = true;
+          const returnTo = encodeURIComponent(location.pathname + location.search);
+          nav(`/login?reason=admin_only&returnTo=${returnTo}`, { replace: true });
+        }
+      }
+    })();
+
+    return () => { mountedRef.current = false; };
+  }, [location.pathname, location.search, nav]);
+
+  const navigation = useMemo(() => ([
     {
       name: 'Dashboard',
       href: '/admin/dashboard',
@@ -45,15 +83,23 @@ const AdminLayout = () => {
         </svg>
       ),
     },
-  ];
+  ]), []);
+
+  const isActive = (href) => location.pathname === href || location.pathname.startsWith(href + '/');
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+    } finally {
+      nav('/login', { replace: true });
+    }
   };
+
+  if (!ready) return <div className="p-6">Checking access…</div>;
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
-      {/* Sidebar */}
+      {/* Mobile sidebar */}
       <div className={`${sidebarOpen ? 'block' : 'hidden'} fixed inset-0 flex z-40 md:hidden`}>
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
@@ -76,11 +122,11 @@ const AdminLayout = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`${
-                    location.pathname === item.href
+                  onClick={() => setSidebarOpen(false)}
+                  className={`${isActive(item.href)
                       ? 'bg-blue-100 text-blue-900'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+                    } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
                 >
                   {item.icon}
                   <span className="ml-3">{item.name}</span>
@@ -91,7 +137,7 @@ const AdminLayout = () => {
         </div>
       </div>
 
-      {/* Static sidebar for desktop */}
+      {/* Desktop sidebar */}
       <div className="hidden md:flex md:flex-shrink-0">
         <div className="flex flex-col w-64">
           <div className="flex flex-col h-0 flex-1 bg-white shadow">
@@ -111,11 +157,10 @@ const AdminLayout = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`${
-                      location.pathname === item.href
+                    className={`${isActive(item.href)
                         ? 'bg-blue-100 text-blue-900'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                      } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
                   >
                     {item.icon}
                     <span className="ml-3">{item.name}</span>
