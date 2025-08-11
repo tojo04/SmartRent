@@ -2,7 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { config } from '../src/config/configuration.js';
-import { User } from '../src/users/user.model.js';
+import { User } from '../src/users/users.model.js';
 
 async function main() {
   const email = process.env.ADMIN_EMAIL;

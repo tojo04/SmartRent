@@ -12,6 +12,15 @@ function signRefreshToken(payload) {
 }
 
 export const AuthService = {
+  // New helper: validate credentials only (no tokens here)
+  async validateCredentials({ email, password }) {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error('Invalid email or password');
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) throw new Error('Invalid email or password');
+    return user;
+  },
+
   async register({ name, email, password }) {
     const exists = await User.findOne({ email });
     if (exists) throw new Error('Email already in use');
@@ -22,10 +31,13 @@ export const AuthService = {
   },
 
   async login({ email, password }) {
-    const user = await User.findOne({ email });
-    if (!user) throw new Error('Invalid email or password');
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) throw new Error('Invalid email or password');
+    const user = await this.validateCredentials({ email, password });
+    const tokens = await this._issueTokens(user);
+    return { user: this._publicUser(user), ...tokens };
+  },
+
+  // Used by /auth/login-admin after role check
+  async issueFor(user) {
     const tokens = await this._issueTokens(user);
     return { user: this._publicUser(user), ...tokens };
   },
