@@ -8,13 +8,56 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String   @default("")
-  images      String[] @db.Text
-  isRentable  Boolean  @default(true)
-  stock       Int      @default(0)
-  pricePerDay Decimal  @db.Decimal(10,2)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  description   String   @default("")
+  images        String[] @db.Text
+  isRentable    Boolean  @default(true)
+  stock         Int      @default(0)
+  availableStock Int     @default(0)
+  pricePerDay   Decimal  @db.Decimal(10,2)
+  category      String   @default("")
+  brand         String   @default("")
+  model         String   @default("")
+  condition     String   @default("Good") // New, Good, Fair, Poor
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  rentals       Rental[]
+  
+  @@map("products")
+}
+
+model Rental {
+  id          String      @id @default(cuid())
+  userId      String      // MongoDB user ID
+  userEmail   String      // Store email for easier queries
+  userName    String      // Store name for display
+  productId   String
+  startDate   DateTime
+  endDate     DateTime
+  totalDays   Int
+  pricePerDay Decimal     @db.Decimal(10,2)
+  totalPrice  Decimal     @db.Decimal(10,2)
+  status      RentalStatus @default(PENDING)
+  pickupDate  DateTime?
+  returnDate  DateTime?
+  notes       String      @default("")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@map("rentals")
+}
+
+enum RentalStatus {
+  PENDING     // Order placed, pending approval
+  CONFIRMED   // Approved by admin
+  PICKED_UP   // Customer has picked up the item
+  RETURNED    // Item returned
+  CANCELLED   // Order cancelled
+  OVERDUE     // Past return date
 }

@@ -8,14 +8,20 @@ const serialize = (p) => p && ({
 
 export const ProductsService = {
   async create(data) {
+    const stock = Number.isFinite(data.stock) ? Math.max(0, data.stock) : 0;
     const doc = await prisma.product.create({
       data: {
         name: data.name,
         description: data.description ?? '',
         images: Array.isArray(data.images) ? data.images.filter(Boolean) : [],
-        isRentable: Boolean(data.isRentable),
-        stock: Number.isFinite(data.stock) ? Math.max(0, data.stock) : 0,
-        pricePerDay: data.pricePerDay
+        isRentable: Boolean(data.isRentable ?? true),
+        stock: stock,
+        availableStock: stock, // Initially all stock is available
+        pricePerDay: data.pricePerDay,
+        category: data.category ?? '',
+        brand: data.brand ?? '',
+        model: data.model ?? '',
+        condition: data.condition ?? 'Good'
       }
     });
     return serialize(doc);
@@ -57,8 +63,20 @@ export const ProductsService = {
     if (data.description !== undefined) update.description = data.description;
     if (data.images !== undefined) update.images = Array.isArray(data.images) ? data.images.filter(Boolean) : [];
     if (data.isRentable !== undefined) update.isRentable = !!data.isRentable;
-    if (data.stock !== undefined) update.stock = Math.max(0, Number(data.stock));
+    if (data.stock !== undefined) {
+      const newStock = Math.max(0, Number(data.stock));
+      const currentProduct = await prisma.product.findUnique({ where: { id } });
+      if (currentProduct) {
+        const diff = newStock - currentProduct.stock;
+        update.stock = newStock;
+        update.availableStock = Math.max(0, currentProduct.availableStock + diff);
+      }
+    }
     if (data.pricePerDay !== undefined) update.pricePerDay = data.pricePerDay;
+    if (data.category !== undefined) update.category = data.category;
+    if (data.brand !== undefined) update.brand = data.brand;
+    if (data.model !== undefined) update.model = data.model;
+    if (data.condition !== undefined) update.condition = data.condition;
 
     const p = await prisma.product.update({ where: { id }, data: update });
     return serialize(p);

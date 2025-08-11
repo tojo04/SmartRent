@@ -16,11 +16,18 @@ async function main() {
   const passwordHash = await bcrypt.hash(password, 12);
 
   if (!user) {
-    user = await User.create({ email, name, passwordHash, role: 'admin' });
+    user = await User.create({ 
+      email, 
+      name, 
+      passwordHash, 
+      role: 'admin',
+      isEmailVerified: true  // Admin users should be pre-verified
+    });
     console.log(`Created admin ${email}`);
   } else {
     user.role = 'admin';
     user.passwordHash = passwordHash;
+    user.isEmailVerified = true;  // Ensure admin is verified
     await user.save();
     console.log(`Updated existing user ${email} to admin`);
   }

@@ -46,17 +46,7 @@ export const AuthService = {
   async login({ email, password }) {
     const user = await this.validateCredentials({ email, password });
     
-    // Check if email is verified
-    if (!user.isEmailVerified) {
-      // Generate new OTP for verification
-      await OTPService.generateOTP(email);
-      return {
-        user: this._publicUser(user),
-        message: 'Please verify your email with the OTP sent.',
-        requiresVerification: true
-      };
-    }
-    
+    // Simple login - no email verification required
     const tokens = await this._issueTokens(user);
     return { user: this._publicUser(user), ...tokens };
   },

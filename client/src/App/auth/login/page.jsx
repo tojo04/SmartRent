@@ -15,7 +15,7 @@ const loginSchema = z.object({
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated, error, clearError } = useAuth();
+  const { login, isAuthenticated, user, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -29,11 +29,18 @@ const LoginPage = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
+    if (isAuthenticated && user) {
+      const from = location.state?.from?.pathname;
+      let defaultRoute = '/dashboard';
+      
+      // Redirect admin users to admin dashboard by default
+      if (user.role === 'admin') {
+        defaultRoute = '/admin/dashboard';
+      }
+      
+      navigate(from || defaultRoute, { replace: true });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, user, navigate, location]);
 
   // Clear errors when component mounts
   useEffect(() => {
@@ -42,15 +49,11 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     const result = await login(data);
-    if (result.success && !result.requiresVerification) {
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
-    } else if (result.requiresVerification) {
-      navigate('/auth/verify-email', { 
-        state: { email: data.email },
-        replace: true 
-      });
+    if (result.success) {
+      // The useEffect will handle redirection based on user role
+      // Login is always simple now - no verification required
     }
+    // If login fails, error will be shown via the error state
   };
 
   return (

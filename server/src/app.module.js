@@ -7,6 +7,7 @@ import { config } from './config/configuration.js';
 import { authRouter } from './auth/auth.module.js';
 import { usersRouter } from './users/users.controller.js';
 import { productsRouter } from './products/products.module.js';
+import { rentalsRouter } from './rentals/rentals.module.js';
 
 export async function createApp() {
   await mongoose.connect(config.mongoUri);
@@ -24,6 +25,7 @@ export async function createApp() {
   app.use('/auth', authRouter);
   app.use('/users', usersRouter);
   app.use('/products', productsRouter);
+  app.use('/rentals', rentalsRouter);
 
   return app;
 }

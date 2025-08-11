@@ -8,7 +8,7 @@ function setRefreshCookie(res, token) {
     secure: config.cookies.secure,
     sameSite: config.cookies.sameSite,
     maxAge: maxAgeMs,
-    path: '/auth'
+    path: config.cookies.path
   });
 }
 
@@ -16,7 +16,14 @@ export const AuthController = {
   register: async (req, res) => {
     try {
       const { name, email, password } = req.body;
+      console.log(`📝 Registration attempt: ${email}`);
+      
+      if (!name || !email || !password) {
+        return res.status(400).json({ message: 'Name, email, and password are required' });
+      }
+      
       const result = await AuthService.register({ name, email, password });
+      console.log(`✅ Registration successful: ${email}`);
       
       if (result.requiresVerification) {
         res.status(201).json({ 
@@ -29,6 +36,7 @@ export const AuthController = {
         res.status(201).json({ user: result.user, accessToken: result.accessToken });
       }
     } catch (e) {
+      console.error(`❌ Registration failed for ${req.body?.email}:`, e.message);
       res.status(400).json({ message: e.message || 'Registration failed' });
     }
   },
@@ -36,19 +44,15 @@ export const AuthController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
-      const result = await AuthService.login({ email, password });
+      console.log(`🔑 Login attempt: ${email}`);
       
-      if (result.requiresVerification) {
-        res.json({ 
-          user: result.user, 
-          message: result.message,
-          requiresVerification: true 
-        });
-      } else {
-        setRefreshCookie(res, result.refreshToken);
-        res.json({ user: result.user, accessToken: result.accessToken });
-      }
+      const result = await AuthService.login({ email, password });
+      console.log(`✅ Login successful: ${email}`);
+      
+      setRefreshCookie(res, result.refreshToken);
+      res.json({ user: result.user, accessToken: result.accessToken });
     } catch (e) {
+      console.error(`❌ Login failed for ${req.body?.email}:`, e.message);
       res.status(401).json({ message: e.message || 'Login failed' });
     }
   },
@@ -134,7 +138,7 @@ export const AuthController = {
 
   logout: async (req, res) => {
     try {
-      res.clearCookie(config.cookies.name, { path: '/auth' });
+      res.clearCookie(config.cookies.name, { path: config.cookies.path });
       const userId = (req.user && req.user.id) || req.userId || req.userIdFromRefresh;
       if (userId) await AuthService.logout(userId);
       res.json({ success: true });

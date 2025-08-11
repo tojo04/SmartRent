@@ -1,57 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../../lib/api';
 
 const OrdersManagement = () => {
-  // Mock orders data - replace with actual API call
-  const [orders] = useState([
-    {
-      id: 'ORD-001',
-      customer: 'John Doe',
-      email: 'john@example.com',
-      product: 'Electric Drill',
-      rentDate: '2024-01-15',
-      returnDate: '2024-01-18',
-      total: '$75',
-      status: 'Active',
-      paymentStatus: 'Paid',
-    },
-    {
-      id: 'ORD-002',
-      customer: 'Jane Smith',
-      email: 'jane@example.com',
-      product: 'Lawn Mower',
-      rentDate: '2024-01-10',
-      returnDate: '2024-01-12',
-      total: '$80',
-      status: 'Completed',
-      paymentStatus: 'Paid',
-    },
-    {
-      id: 'ORD-003',
-      customer: 'Mike Johnson',
-      email: 'mike@example.com',
-      product: 'Party Tent',
-      rentDate: '2024-01-20',
-      returnDate: '2024-01-22',
-      total: '$200',
-      status: 'Pending',
-      paymentStatus: 'Pending',
-    },
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await api.get('/rentals');
+      setOrders(response.data.items || []);
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+      setError('Failed to load orders');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await api.patch(`/rentals/${orderId}/status`, { status: newStatus });
+      await fetchOrders(); // Refresh the list
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+      setError('Failed to update order status');
+    }
+  };
 
   const getStatusBadgeColor = (status) => {
     switch (status) {
-      case 'Active':
-        return 'bg-blue-100 text-blue-800';
-      case 'Completed':
-        return 'bg-green-100 text-green-800';
-      case 'Pending':
+      case 'PENDING':
         return 'bg-yellow-100 text-yellow-800';
-      case 'Cancelled':
+      case 'CONFIRMED':
+        return 'bg-blue-100 text-blue-800';
+      case 'PICKED_UP':
+        return 'bg-green-100 text-green-800';
+      case 'RETURNED':
+        return 'bg-gray-100 text-gray-800';
+      case 'CANCELLED':
+        return 'bg-red-100 text-red-800';
+      case 'OVERDUE':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const getFilteredOrders = () => {
+    if (filter === 'all') return orders;
+    return orders.filter(order => order.status === filter);
+  };
+
+  const getStatusCounts = () => {
+    return {
+      total: orders.length,
+      pending: orders.filter(o => o.status === 'PENDING').length,
+      active: orders.filter(o => ['CONFIRMED', 'PICKED_UP'].includes(o.status)).length,
+      completed: orders.filter(o => o.status === 'RETURNED').length,
+      overdue: orders.filter(o => o.status === 'OVERDUE').length
+    };
+  };
+
+  if (loading) {
+    return (
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
 
   const getPaymentStatusBadgeColor = (status) => {
     switch (status) {
@@ -98,7 +124,7 @@ const OrdersManagement = () => {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Total Orders</dt>
-                  <dd className="text-lg font-medium text-gray-900">{orders.length}</dd>
+                  <dd className="text-lg font-medium text-gray-900">{getStatusCounts().total}</dd>
                 </dl>
               </div>
             </div>
@@ -117,7 +143,7 @@ const OrdersManagement = () => {
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Active Orders</dt>
                   <dd className="text-lg font-medium text-gray-900">
-                    {orders.filter(o => o.status === 'Active').length}
+                    {getStatusCounts().active}
                   </dd>
                 </dl>
               </div>
@@ -137,7 +163,7 @@ const OrdersManagement = () => {
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Completed</dt>
                   <dd className="text-lg font-medium text-gray-900">
-                    {orders.filter(o => o.status === 'Completed').length}
+                    {getStatusCounts().completed}
                   </dd>
                 </dl>
               </div>
@@ -156,7 +182,9 @@ const OrdersManagement = () => {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Revenue</dt>
-                  <dd className="text-lg font-medium text-gray-900">$355</dd>
+                  <dd className="text-lg font-medium text-gray-900">
+                    ${orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0).toFixed(2)}
+                  </dd>
                 </dl>
               </div>
             </div>
@@ -197,39 +225,40 @@ const OrdersManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {orders.map((order) => (
+              {getFilteredOrders().map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{order.id}</div>
+                    <div className="text-sm font-medium text-gray-900">#{order.id.slice(0, 8)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-8 w-8">
                         <div className="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center">
                           <span className="text-xs font-medium text-gray-700">
-                            {order.customer.charAt(0).toUpperCase()}
+                            {order.userName.charAt(0).toUpperCase()}
                           </span>
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{order.customer}</div>
-                        <div className="text-sm text-gray-500">{order.email}</div>
+                        <div className="text-sm font-medium text-gray-900">{order.userName}</div>
+                        <div className="text-sm text-gray-500">{order.userEmail}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{order.product}</div>
+                    <div className="text-sm text-gray-900">{order.product?.name || 'N/A'}</div>
+                    <div className="text-sm text-gray-500">{order.product?.category || ''}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {new Date(order.rentDate).toLocaleDateString()} - {new Date(order.returnDate).toLocaleDateString()}
+                      {new Date(order.startDate).toLocaleDateString()} - {new Date(order.endDate).toLocaleDateString()}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {Math.ceil((new Date(order.returnDate) - new Date(order.rentDate)) / (1000 * 60 * 60 * 24))} days
+                      {order.totalDays} days
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{order.total}</div>
+                    <div className="text-sm font-medium text-gray-900">${order.totalPrice}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(order.status)}`}>
@@ -237,23 +266,42 @@ const OrdersManagement = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusBadgeColor(order.paymentStatus)}`}>
-                      {order.paymentStatus}
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Paid
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-xs font-medium transition-colors">
-                        View
-                      </button>
-                      {order.status === 'Pending' && (
-                        <button className="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1 rounded-md text-xs font-medium transition-colors">
-                          Approve
+                      {order.status === 'PENDING' && (
+                        <button 
+                          onClick={() => updateOrderStatus(order.id, 'CONFIRMED')}
+                          className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-xs font-medium transition-colors"
+                        >
+                          Confirm
                         </button>
                       )}
-                      {order.status === 'Active' && (
-                        <button className="text-purple-600 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-md text-xs font-medium transition-colors">
-                          Complete
+                      {order.status === 'CONFIRMED' && (
+                        <button 
+                          onClick={() => updateOrderStatus(order.id, 'PICKED_UP')}
+                          className="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1 rounded-md text-xs font-medium transition-colors"
+                        >
+                          Mark Picked Up
+                        </button>
+                      )}
+                      {order.status === 'PICKED_UP' && (
+                        <button 
+                          onClick={() => updateOrderStatus(order.id, 'RETURNED')}
+                          className="text-purple-600 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-md text-xs font-medium transition-colors"
+                        >
+                          Mark Returned
+                        </button>
+                      )}
+                      {['PENDING', 'CONFIRMED'].includes(order.status) && (
+                        <button 
+                          onClick={() => updateOrderStatus(order.id, 'CANCELLED')}
+                          className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md text-xs font-medium transition-colors"
+                        >
+                          Cancel
                         </button>
                       )}
                     </div>

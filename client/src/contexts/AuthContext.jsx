@@ -42,15 +42,17 @@ export const AuthProvider = ({ children }) => {
         const persist = !!localStorage.getItem('sr_remember');
   
         // Try to refresh access token if refresh cookie exists
-        const { accessToken } = await authAPI.refresh({ persist });
-        if (accessToken) {
-          setAccessToken(accessToken);
+        const result = await authAPI.refresh({ persist });
+        if (result?.accessToken) {
+          setAccessToken(result.accessToken);
           const data = await authAPI.me();
           dispatch({ type: 'SET_USER', payload: data.user });
         } else {
           dispatch({ type: 'SET_USER', payload: null });
         }
-      } catch {
+      } catch (error) {
+        // Silently handle refresh failures - user just needs to login again
+        console.debug('Token refresh failed (this is normal on first visit):', error.response?.status);
         dispatch({ type: 'SET_USER', payload: null });
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
@@ -66,26 +68,18 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: 'SET_ERROR', payload: null });
   
       const data = await authAPI.login(credentials);
-  
-      if (data.requiresVerification) {
-        return { 
-          success: true, 
-          requiresVerification: true, 
-          user: data.user,
-          message: data.message 
-        };
+      
+      // Simple login flow - always successful if credentials are valid
+      setAccessToken(data.accessToken);
+      dispatch({ type: 'SET_USER', payload: data.user });
+      
+      if (credentials.rememberMe) {
+        localStorage.setItem('sr_remember', '1');
       } else {
-        setAccessToken(data.accessToken);
-        dispatch({ type: 'SET_USER', payload: data.user });
-        
-        if (credentials.rememberMe) {
-          localStorage.setItem('sr_remember', '1');
-        } else {
-          localStorage.removeItem('sr_remember');
-        }
-        
-        return { success: true };
+        localStorage.removeItem('sr_remember');
       }
+      
+      return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
       dispatch({ type: 'SET_ERROR', payload: message });

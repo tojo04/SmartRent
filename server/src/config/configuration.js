@@ -16,6 +16,16 @@ const buildCorsOrigin = () => {
   return envOrigins.length > 0 ? envOrigins : true; // reflect request origin if none provided
 };
 
+// Validate required environment variables
+const requiredEnvVars = ['MONGO_URI', 'JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  console.error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
+  console.error('Please copy config.example.env to .env and configure your environment variables');
+  process.exit(1);
+}
+
 export const config = {
   port: process.env.PORT || 4000,
   mongoUri: process.env.MONGO_URI,

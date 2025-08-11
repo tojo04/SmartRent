@@ -84,8 +84,8 @@ export const authAPI = {
   resetPassword: (body) => api.post('/auth/reset-password', body).then(r => r.data),
   logout: () => api.post('/auth/logout').then(r => r.data),
   me:     () => api.get('/auth/me').then(r => r.data),
-  refresh: () => {
-    const persist = localStorage.getItem('sr_remember') === '1';
+  refresh: (options = {}) => {
+    const persist = options.persist ?? (localStorage.getItem('sr_remember') === '1');
     return api.post('/auth/refresh', { persist }).then(r => r.data);
   }, // safe now (interceptor skips it)
 };
