@@ -42,9 +42,14 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     const result = await login(data);
-    if (result.success) {
+    if (result.success && !result.requiresVerification) {
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
+    } else if (result.requiresVerification) {
+      navigate('/auth/verify-email', { 
+        state: { email: data.email },
+        replace: true 
+      });
     }
   };
 
@@ -157,6 +162,7 @@ const LoginPage = () => {
           <div className="text-sm">
             <button 
               type="button"
+              onClick={() => navigate('/auth/forgot-password')}
               className="font-semibold text-blue-600 hover:text-blue-700 transition-colors duration-300 hover:underline"
             >
               Forgot password?

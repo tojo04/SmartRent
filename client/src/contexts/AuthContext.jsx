@@ -66,16 +66,26 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: 'SET_ERROR', payload: null });
   
       const data = await authAPI.login(credentials);
-      setAccessToken(data.accessToken);
-      dispatch({ type: 'SET_USER', payload: data.user });
   
-      if (credentials.rememberMe) {
-        localStorage.setItem('sr_remember', '1');
+      if (data.requiresVerification) {
+        return { 
+          success: true, 
+          requiresVerification: true, 
+          user: data.user,
+          message: data.message 
+        };
       } else {
-        localStorage.removeItem('sr_remember');
+        setAccessToken(data.accessToken);
+        dispatch({ type: 'SET_USER', payload: data.user });
+        
+        if (credentials.rememberMe) {
+          localStorage.setItem('sr_remember', '1');
+        } else {
+          localStorage.removeItem('sr_remember');
+        }
+        
+        return { success: true };
       }
-  
-      return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
       dispatch({ type: 'SET_ERROR', payload: message });
@@ -92,12 +102,80 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: 'SET_ERROR', payload: null });
       
       const data = await authAPI.register(userData);
+      
+      if (data.requiresVerification) {
+        return { 
+          success: true, 
+          requiresVerification: true, 
+          user: data.user,
+          message: data.message 
+        };
+      } else {
+        setAccessToken(data.accessToken);
+        dispatch({ type: 'SET_USER', payload: data.user });
+        return { success: true };
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Registration failed';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      return { success: false, error: message };
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const verifyEmail = async (verificationData) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+      
+      const data = await authAPI.verifyEmail(verificationData);
       setAccessToken(data.accessToken);
       dispatch({ type: 'SET_USER', payload: data.user });
       
-      return { success: true };
+      return { success: true, message: data.message };
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      const message = error.response?.data?.message || 'Email verification failed';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      return { success: false, error: message };
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const resendOTP = async (email) => {
+    try {
+      dispatch({ type: 'SET_ERROR', payload: null });
+      const data = await authAPI.resendOTP({ email });
+      return { success: true, message: data.message };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to resend OTP';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      return { success: false, error: message };
+    }
+  };
+
+  const requestPasswordReset = async (email) => {
+    try {
+      dispatch({ type: 'SET_ERROR', payload: null });
+      const data = await authAPI.requestPasswordReset({ email });
+      return { success: true, message: data.message, resetToken: data.resetToken };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to request password reset';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      return { success: false, error: message };
+    }
+  };
+
+  const resetPassword = async (resetData) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+      
+      const data = await authAPI.resetPassword(resetData);
+      return { success: true, message: data.message };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Password reset failed';
       dispatch({ type: 'SET_ERROR', payload: message });
       return { success: false, error: message };
     } finally {
@@ -125,6 +203,10 @@ export const AuthProvider = ({ children }) => {
     ...state,
     login,
     register,
+    verifyEmail,
+    resendOTP,
+    requestPasswordReset,
+    resetPassword,
     logout,
     clearError,
   };

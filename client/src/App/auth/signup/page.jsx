@@ -73,8 +73,13 @@ const SignupPage = () => {
   const onSubmit = async (data) => {
     const { confirmPassword, ...userData } = data;
     const result = await registerUser(userData);
-    if (result.success) {
+    if (result.success && !result.requiresVerification) {
       navigate('/dashboard', { replace: true });
+    } else if (result.requiresVerification) {
+      navigate('/auth/verify-email', { 
+        state: { email: userData.email },
+        replace: true 
+      });
     }
   };
 
