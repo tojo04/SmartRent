@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { User } from '../users/users.model.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 
 // In-memory OTP store (in production, use Redis or database)
 const otpStore = new Map();
@@ -17,8 +18,8 @@ export const OTPService = {
       maxAttempts: 3
     });
 
-    // In production, send OTP via email/SMS
-    console.log(`OTP for ${email}: ${otp}`);
+    // Send OTP via email
+    await NotificationsService.sendOTPEmail(email, otp);
     
     return { success: true, message: 'OTP sent successfully' };
   },

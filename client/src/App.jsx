@@ -19,6 +19,7 @@ import ProductDetailPage from './App/products/productId/page';
 // Generic pages
 import DashboardPage from './pages/DashBoardPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
+import RentalsPage from './App/customer/rentals/page';
 
 // Admin (layout file is at src/App/layout.jsx in your tree)
 import AdminLayout from './App/layout.jsx';
@@ -77,8 +78,19 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            
+            {/* Customer routes */}
+            <Route
+              path="/rentals"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <RentalsPage />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Admin only routes */}
 
-            {/* Admin only */}
             <Route
               path="/admin"
               element={
