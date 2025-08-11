@@ -6,6 +6,8 @@ export const productsRouter = Router();
 
 // Public reads (storefront)
 productsRouter.get('/', ProductsController.list);
+productsRouter.get('/categories', ProductsController.getCategories);
+productsRouter.get('/brands', ProductsController.getBrands);
 productsRouter.get('/:id', ProductsController.getOne);
 
 // Admin writes

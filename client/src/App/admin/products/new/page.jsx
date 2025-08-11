@@ -197,7 +197,7 @@ const NewProductPage = () => {
             {/* Price Per Day */}
             <div>
               <label htmlFor="pricePerDay" className="block text-sm font-medium text-gray-700">
-                Price Per Day ($) *
+                Price Per Day (₹) *
               </label>
               <input
                 type="number"

@@ -68,7 +68,8 @@ const ProductsManagement = () => {
     if (product.images && product.images.length > 0) {
       return product.images[0];
     }
-    return `https://via.placeholder.com/60x60?text=${product.name.charAt(0)}`;
+    // Use a data URI for a default icon instead of external placeholder
+    return `data:image/svg+xml;base64,${btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" fill="#E5E7EB"/><text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#6B7280" font-family="Arial, sans-serif" font-size="20" font-weight="bold">${product.name?.charAt(0) || 'P'}</text></svg>`)}`;
   };
 
   if (loading) {
@@ -250,7 +251,7 @@ const ProductsManagement = () => {
                             src={getProductImage(product)} 
                             alt={product.name}
                             onError={(e) => {
-                              e.target.src = `https://via.placeholder.com/60x60?text=${product.name.charAt(0)}`;
+                              e.target.src = `data:image/svg+xml;base64,${btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" fill="#E5E7EB"/><text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#6B7280" font-family="Arial, sans-serif" font-size="20" font-weight="bold">${product.name?.charAt(0) || 'P'}</text></svg>`)}`;
                             }}
                           />
                         </div>
@@ -268,7 +269,7 @@ const ProductsManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 font-medium">
-                        ${product.pricePerDay}/day
+                        ₹{product.pricePerDay}/day
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

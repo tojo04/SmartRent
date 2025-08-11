@@ -22,6 +22,7 @@
     "force-migrate": "node scripts/force-migrate-lowercase.js",
     "fix-all": "npm run setup-lowercase && npm run force-migrate",
     "complete-fix": "node scripts/complete-fix.js",
+    "test-backend": "node scripts/test-backend-integration.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio"

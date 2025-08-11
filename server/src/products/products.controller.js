@@ -16,16 +16,56 @@ export const ProductsController = {
 
   list: async (req, res) => {
     try {
-      const { page, limit, search, rentable } = req.query;
+      const { 
+        page, 
+        limit, 
+        search, 
+        rentable, 
+        category, 
+        brand, 
+        condition,
+        minPrice, 
+        maxPrice, 
+        sortBy, 
+        sortOrder 
+      } = req.query;
+      
       const out = await ProductsService.list({
         page,
         limit,
         search,
-        rentable: rentable === undefined ? undefined : rentable === 'true'
+        rentable: rentable === undefined ? undefined : rentable === 'true',
+        category,
+        brand,
+        condition,
+        minPrice: minPrice ? parseFloat(minPrice) : undefined,
+        maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+        sortBy,
+        sortOrder
       });
       res.json(out);
     } catch {
       res.status(500).json({ message: 'List failed' });
+    }
+  },
+
+  // Get all categories for filters
+  getCategories: async (req, res) => {
+    try {
+      const categories = await ProductsService.getCategories();
+      res.json({ categories });
+    } catch {
+      res.status(500).json({ message: 'Failed to fetch categories' });
+    }
+  },
+
+  // Get all brands for filters
+  getBrands: async (req, res) => {
+    try {
+      const brands = await ProductsService.getBrands();
+      res.json({ brands });
+    } catch {
+      res.status(500).json({ message: 'Failed to fetch brands' });
     }
   },
 

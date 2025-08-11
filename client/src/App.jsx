@@ -8,13 +8,22 @@ import VerifyEmailPage from './App/auth/verify-email/page';
 import ForgotPasswordPage from './App/auth/forgot-password/page';
 import DashboardPage from './pages/DashBoardPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
+
+// Customer Components
 import RentalsPage from './App/customer/rentals/page';
+import RentalShopPage from './App/customer/products/page';
+import ProductDetailsPage from './App/customer/products/[productId]/page';
+import ReviewOrderPage from './App/customer/checkout/review/page';
+import DeliveryPage from './App/customer/checkout/delivery/page';
+import PaymentPage from './App/customer/checkout/payment/page';
+import CheckoutSuccessPage from './App/customer/checkout/success/page';
 
 // Admin Components
 import AdminLayout from './App/admin/layout';
 import AdminDashboard from './App/admin/dashboard/page';
 import AdminUsers from './App/admin/users/page';
 import AdminProducts from './App/admin/products/page';
+import AdminProductNew from './App/admin/products/new/page';
 import AdminOrders from './App/admin/orders/page';
 
 function App() {
@@ -44,7 +53,63 @@ function App() {
             
             {/* Customer routes */}
             <Route
+              path="/products"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <RentalShopPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/products/:productId"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <ProductDetailsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout/review"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <ReviewOrderPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout/delivery"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <DeliveryPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout/payment"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout/success"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <CheckoutSuccessPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/rentals"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <RentalsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-rentals"
               element={
                 <ProtectedRoute requiredRole="customer">
                   <RentalsPage />
@@ -65,14 +130,15 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="products" element={<AdminProducts />} />
+              <Route path="products/new" element={<AdminProductNew />} />
               <Route path="orders" element={<AdminOrders />} />
             </Route>
             
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Navigate to="/products" replace />} />
             
             {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/products" replace />} />
           </Routes>
         </div>
       </Router>

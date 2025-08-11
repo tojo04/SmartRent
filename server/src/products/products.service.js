@@ -27,17 +27,55 @@ export const ProductsService = {
     return serialize(doc);
   },
 
-  async list({ page = 1, limit = 20, search = '', rentable } = {}) {
+  async list({ 
+    page = 1, 
+    limit = 20, 
+    search = '', 
+    rentable, 
+    category, 
+    brand, 
+    condition,
+    minPrice, 
+    maxPrice, 
+    sortBy = 'createdAt', 
+    sortOrder = 'desc' 
+  } = {}) {
     const where = {};
-    if (search) where.name = { contains: search, mode: 'insensitive' };
+    
+    // Text search across name and description
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { category: { contains: search, mode: 'insensitive' } },
+        { brand: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+    
+    // Filter conditions
     if (typeof rentable === 'boolean') where.isRentable = rentable;
+    if (category) where.category = { contains: category, mode: 'insensitive' };
+    if (brand) where.brand = { contains: brand, mode: 'insensitive' };
+    if (condition) where.condition = { contains: condition, mode: 'insensitive' };
+    
+    // Price range filtering
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.pricePerDay = {};
+      if (minPrice !== undefined) where.pricePerDay.gte = minPrice;
+      if (maxPrice !== undefined) where.pricePerDay.lte = maxPrice;
+    }
 
     const skip = (Math.max(1, +page) - 1) * Math.max(1, +limit);
+
+    // Dynamic sorting
+    const validSortFields = ['createdAt', 'updatedAt', 'name', 'pricePerDay', 'category', 'brand'];
+    const sortField = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const sortDirection = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'desc';
 
     const [items, total] = await Promise.all([
       prisma.product.findMany({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { [sortField]: sortDirection },
         skip,
         take: Math.max(1, +limit)
       }),
@@ -48,8 +86,30 @@ export const ProductsService = {
       items: items.map(serialize),
       total,
       page: +page,
-      limit: +limit
+      limit: +limit,
+      hasNext: skip + items.length < total,
+      hasPrev: page > 1
     };
+  },
+
+  // Get all unique categories
+  async getCategories() {
+    const result = await prisma.product.findMany({
+      where: { isRentable: true },
+      select: { category: true },
+      distinct: ['category']
+    });
+    return result.map(item => item.category).filter(Boolean).sort();
+  },
+
+  // Get all unique brands
+  async getBrands() {
+    const result = await prisma.product.findMany({
+      where: { isRentable: true },
+      select: { brand: true },
+      distinct: ['brand']
+    });
+    return result.map(item => item.brand).filter(Boolean).sort();
   },
 
   async getById(id) {
