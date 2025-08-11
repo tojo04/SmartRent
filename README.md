@@ -21,7 +21,7 @@ SmartRent/
  │   │   │   ├── dashboard
  │   │   │   │   └── page.jsx
  │   │   │   ├── products
- │   │   │   │   ├──  new
+ │   │   │   │   ├── new
  │   │   │   │   │   └── page.jsx
  │   │   │   │   └── page.jsx    
  │   │   │   ├── orders
@@ -29,19 +29,19 @@ SmartRent/
  │   │   │   └── layout.jsx      
  │   │   │
  │   │   ├── (auth)      
- │   │   │   ├──  login
+ │   │   │   ├── login
  │   │   │   │   └── page.jsx
- │   │   │   ├──  signup
+ │   │   │   ├── signup
  │   │   │   │   └── page.jsx
  │   │   │   └── layout.jsx
  │   │   │
  │   │   ├── (customer)
- │   │   │   ├──  products
- │   │   │   │   └──  [productId]
+ │   │   │   ├── products
+ │   │   │   │   └── [productId]
  │   │   │   │       └── page.jsx
- │   │   │   ├──  cart
+ │   │   │   ├── cart
  │   │   │   │   └── page.jsx        
- │   │   │   ├──  my-rentals
+ │   │   │   ├── my-rentals
  │   │   │   │   └── page.jsx        
  │   │   │   └── layout.jsx       
  │   │   │
@@ -51,8 +51,8 @@ SmartRent/
  │   │   └── page.jsx                
  │   │
  │   ├── components              
- │   │   ├──  ui                  
- │   │   ├──  icons               
+ │   │   ├── ui                  
+ │   │   ├── icons               
  │   │   └── ProductCard.jsx         
  │   │
  │   ├── lib                     
@@ -64,29 +64,29 @@ SmartRent/
  │   └── tsconfig.json
  │
  │
- ├──  server
- │   ├──  src
- │   │   ├──  auth
+ ├── server
+ │   ├── src
+ │   │   ├── auth
  │   │   │   ├── auth.controller.js
  │   │   │   ├── auth.service.js
  │   │   │   └── auth.module.js
  │   │   │
- │   │   ├──  users
+ │   │   ├── users
  │   │   │   ├── users.controller.js
  │   │   │   ├── users.service.js
  │   │   │   └── users.module.js
  │   │   │
- │   │   ├──  products
+ │   │   ├── products
  │   │   │   ├── products.controller.js
  │   │   │   ├── products.service.js
  │   │   │   └── products.module.js
  │   │   │
- │   │   ├──  orders
+ │   │   ├── orders
  │   │   │   ├── orders.controller.js
  │   │   │   ├── orders.service.js
  │   │   │   └── orders.module.js
  │   │   │
- │   │   ├──  payments
+ │   │   ├── payments
  │   │   │   ├── payments.controller.js
  │   │   │   └── payments.service.js
  │   │   │
@@ -97,21 +97,20 @@ SmartRent/
  │   │   ├── notifications
  │   │   │   └── notifications.service.js
  │   │   │
- │   │   ├──  reports
+ │   │   ├── reports
  │   │   │   ├── reports.controller.js
  │   │   │   └── reports.service.js
  │   │   │
  │   │   ├── config
  │   │   │   └── configuration.js
  │   │   │
- │   │   ├── app.module.js           
+ │   │   ├── app.module.js
  │   │   └── main.js
  │   │
  │   ├── .eslintrc.js
- │   ├── package.json
- │   └── tsconfig.json
+ │   └── package.json
  │
- ├── .gitignore                     
+ ├── .gitignore
  └── README.md
 
  ```
