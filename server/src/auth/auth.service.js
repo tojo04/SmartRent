@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { User } from '../users/user.model.js';
+import { User } from '../users/users.model.js';
 import { config } from '../config/configuration.js';
 
 function signAccessToken(payload) {
