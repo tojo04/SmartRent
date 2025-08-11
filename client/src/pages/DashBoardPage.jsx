@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect admin users to admin panel
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleLogout = async () => {
     await logout();
