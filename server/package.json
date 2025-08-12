@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/main.js",
     "seed:admin": "node scripts/seed-admin.js",
+    "seed:products": "node scripts/seed-products.js",
     "verify": "node scripts/verify-setup.js",
     "verify-user": "node scripts/verify-user.js",
     "dev-login-helper": "node scripts/dev-login-helper.js",
