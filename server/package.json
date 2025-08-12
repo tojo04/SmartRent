@@ -40,9 +40,12 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-rate-limit": "^8.0.1",
+    "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.1",
     "mongoose": "^8.17.1",
     "nodemailer": "^6.10.1",
+    "puppeteer": "^24.16.1",
     "razorpay": "^2.9.6"
   },
   "devDependencies": {

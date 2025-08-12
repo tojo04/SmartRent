@@ -127,5 +127,33 @@ export const RentalsController = {
       console.error(`❌ Get user rentals failed:`, error.message);
       res.status(500).json({ message: 'Failed to fetch rental history' });
     }
+  },
+
+  // Create formal rental order (admin)
+  createOrder: async (req, res) => {
+    try {
+      const orderData = req.body;
+      const user = req.user;
+      
+      const result = await RentalsService.createFormalOrder(orderData, user.id);
+      res.json({ success: true, order: result });
+    } catch (error) {
+      console.error('Failed to create rental order:', error);
+      res.status(400).json({ message: error.message });
+    }
+  },
+
+  // Generate PDF invoice
+  generatePDF: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const orderData = req.body;
+      
+      const result = await RentalsService.generatePDFInvoice(id, orderData);
+      res.json({ success: true, message: 'PDF generated and sent successfully' });
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+      res.status(500).json({ message: error.message });
+    }
   }
 };

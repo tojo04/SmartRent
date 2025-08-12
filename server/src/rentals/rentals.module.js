@@ -15,3 +15,5 @@ rentalsRouter.get('/:id', requireAuth, requireRole('customer', 'admin'), Rentals
 
 // Admin only routes
 rentalsRouter.patch('/:id/status', requireAuth, requireRole('admin'), RentalsController.updateStatus);
+rentalsRouter.post('/create-order', requireAuth, requireRole('admin'), RentalsController.createOrder);
+rentalsRouter.post('/:id/generate-pdf', requireAuth, requireRole('admin'), RentalsController.generatePDF);

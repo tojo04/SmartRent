@@ -1,4 +1,6 @@
 import { prisma } from '../db/postgres.js';
+import { PDFService } from './pdf.service.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 
 // Helper to serialize decimal fields
 const serialize = (rental) => rental && ({
@@ -242,5 +244,56 @@ export const RentalsService = {
     });
     
     return overdueRentals;
+  },
+
+  // Create formal rental order
+  async createFormalOrder(orderData, adminUserId) {
+    const { rentalId, ...formData } = orderData;
+    
+    const rental = await prisma.rental.findUnique({
+      where: { id: rentalId },
+      include: { product: true }
+    });
+    
+    if (!rental) {
+      throw new Error('Rental not found');
+    }
+    
+    // Update rental with formal order data
+    const updatedRental = await prisma.rental.update({
+      where: { id: rentalId },
+      data: {
+        status: 'CONFIRMED',
+        notes: `${rental.notes}\n\nFormal Order Created:\n${JSON.stringify(formData, null, 2)}`
+      },
+      include: { product: true }
+    });
+    
+    return serialize(updatedRental);
+  },
+
+  // Generate PDF invoice and send via email
+  async generatePDFInvoice(rentalId, orderData) {
+    const rental = await prisma.rental.findUnique({
+      where: { id: rentalId },
+      include: { product: true }
+    });
+    
+    if (!rental) {
+      throw new Error('Rental not found');
+    }
+    
+    // Generate PDF
+    const pdfBuffer = await PDFService.generateRentalInvoice(rental, orderData);
+    
+    // Send email with PDF attachment
+    await NotificationsService.sendRentalInvoice(
+      rental.userEmail,
+      rental.userName,
+      pdfBuffer,
+      `R${rental.id.slice(0, 6)}`
+    );
+    
+    return { success: true };
   }
 };
