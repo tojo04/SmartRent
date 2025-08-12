@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import { WishlistProvider } from './contexts/WishlistContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import LandingPage from './pages/LandingPage';
 import LoginPage from './App/auth/login/page';
 import SignupPage from './App/auth/signup/page';
 import VerifyEmailPage from './App/auth/verify-email/page';
@@ -36,6 +37,9 @@ function App() {
         <Router>
           <div className="App">
             <Routes>
+            {/* Landing page */}
+            <Route path="/" element={<LandingPage />} />
+            
             {/* Public routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
@@ -147,10 +151,10 @@ function App() {
             </Route>
             
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/auth/login" replace />} />
+            <Route path="/home" element={<Navigate to="/" replace />} />
 
             {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/auth/login" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
         </Router>
