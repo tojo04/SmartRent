@@ -1,23 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import ParticleBackground from '../components/ParticleBackground';
 
 const LandingPage = () => {
-  const { isAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
-
-  // Redirect authenticated users
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      if (user.role === 'admin') {
-        navigate('/admin/dashboard', { replace: true });
-      } else {
-        navigate('/products', { replace: true });
-      }
-    }
-  }, [isAuthenticated, user, navigate]);
 
   // Handle scroll effect for navbar
   useEffect(() => {
