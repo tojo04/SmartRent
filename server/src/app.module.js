@@ -9,6 +9,7 @@ import { usersRouter } from './users/users.controller.js';
 import { productsRouter } from './products/products.module.js';
 import { rentalsRouter } from './rentals/rentals.module.js';
 import { paymentsRouter } from './payments/payments.module.js';
+import path from 'path';
 
 export async function createApp() {
   await mongoose.connect(config.mongoUri);
@@ -17,6 +18,9 @@ export async function createApp() {
   app.use(cors({ origin: config.cors.origin, credentials: true }));
   app.use(express.json());
   app.use(cookieParser());
+  
+  // Serve static files for PDF generation
+  app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
   const limiter = rateLimit({ windowMs: 60_000, max: 60 });
   app.use('/auth', limiter);
