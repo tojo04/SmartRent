@@ -175,7 +175,7 @@ const RentalShopPage = () => {
             {/* Navigation */}
             <nav className="flex items-center space-x-8">
               <button
-                onClick={() => navigate('/products')}
+                onClick={() => navigate('/')}
                 className="text-gray-900 hover:text-blue-600 transition-colors"
               >
                 Home
