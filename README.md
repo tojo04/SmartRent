@@ -32,6 +32,9 @@
 
 **SmartRent** is a comprehensive full-stack rental management platform that revolutionizes how businesses and customers interact in the rental ecosystem. Built with modern technologies, it provides real-time inventory management, seamless booking experiences, and automated workflows.
 
+### **Video Link** - 
+https://youtu.be/l3mLkUDyNRA
+
 ### **🎯 What Makes SmartRent Special?**
 
 ✅ **Dual-Role Architecture** - Separate experiences for customers and admins  
