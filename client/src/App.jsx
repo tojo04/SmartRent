@@ -30,6 +30,7 @@ import AdminProducts from './App/admin/products/page';
 import AdminProductNew from './App/admin/products/new/page';
 import AdminOrders from './App/admin/orders/page';
 import AdminReports from './App/admin/reports/index';
+import AdminRentals from './App/admin/rentals/page';
 
 function App() {
   return (
@@ -150,7 +151,7 @@ function App() {
               <Route path="products/new" element={<AdminProductNew />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="reports" element={<AdminReports />} />
-              <Route path="reports" element={<AdminReports />} />
+              <Route path="rentals" element={<AdminRentals />} />
             </Route>
             
             {/* Default redirect */}
