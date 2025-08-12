@@ -136,9 +136,9 @@ export const NotificationsService = {
       console.log('\n📧 RENTAL INVOICE EMAIL (Development Mode)');
       console.log('==================================================');
       console.log(`📧 To: ${to}`);
-      console.log(`👤 Customer: ${customerName}`);
-      console.log(`📄 Invoice: ${invoiceNumber}`);
-      console.log(`📎 PDF Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
+      console.log(\`👤 Customer: ${customerName}`);
+      console.log(\`📄 Invoice: ${invoiceNumber}`);
+      console.log(\`📎 PDF Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
       console.log('==================================================');
       console.log('ℹ️  Email configuration not set - invoice details shown above');
       console.log('💡 PDF would be attached in production environment\n');
