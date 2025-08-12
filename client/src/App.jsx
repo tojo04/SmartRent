@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { WishlistProvider } from './contexts/WishlistContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './App/auth/login/page';
 import SignupPage from './App/auth/signup/page';
@@ -13,6 +14,7 @@ import UnauthorizedPage from './pages/UnauthorizedPage';
 import RentalsPage from './App/customer/rentals/page';
 import RentalShopPage from './App/customer/products/page';
 import ProductDetailsPage from './App/customer/products/[productId]/page';
+import WishlistPage from './App/customer/wishlist/page';
 import ReviewOrderPage from './App/customer/checkout/review/page';
 import DeliveryPage from './App/customer/checkout/delivery/page';
 import PaymentPage from './App/customer/checkout/payment/page';
@@ -29,9 +31,10 @@ import AdminOrders from './App/admin/orders/page';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="App">
-          <Routes>
+      <WishlistProvider>
+        <Router>
+          <div className="App">
+            <Routes>
             {/* Public routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
@@ -69,6 +72,14 @@ function App() {
               }
             />
             <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <WishlistPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/checkout/review"
               element={
                 <ProtectedRoute requiredRole="customer">
@@ -101,14 +112,6 @@ function App() {
               }
             />
             <Route
-              path="/rentals"
-              element={
-                <ProtectedRoute requiredRole="customer">
-                  <RentalsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/my-rentals"
               element={
                 <ProtectedRoute requiredRole="customer">
@@ -135,13 +138,14 @@ function App() {
             </Route>
             
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/products" replace />} />
-            
+            <Route path="/" element={<Navigate to="/auth/login" replace />} />
+
             {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/products" replace />} />
-          </Routes>
-        </div>
-      </Router>
+            <Route path="*" element={<Navigate to="/auth/login" replace />} />
+            </Routes>
+          </div>
+        </Router>
+      </WishlistProvider>
     </AuthProvider>
   );
 }
