@@ -9,6 +9,7 @@ import { usersRouter } from './users/users.controller.js';
 import { productsRouter } from './products/products.module.js';
 import { rentalsRouter } from './rentals/rentals.module.js';
 import { paymentsRouter } from './payments/payments.module.js';
+import { reportsRouter } from './reports/reports.module.js';
 
 export async function createApp() {
   await mongoose.connect(config.mongoUri);
@@ -28,6 +29,7 @@ export async function createApp() {
   app.use('/products', productsRouter);
   app.use('/rentals', rentalsRouter);
   app.use('/payments', paymentsRouter);
+  app.use('/reports', reportsRouter);
 
   return app;
 }
