@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import api from '../../../lib/api';
+import { useWishlist } from '../../../contexts/WishlistContext';
 
 const RentalShopPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toggleWishlist, isWishlisted } = useWishlist();
   
   // Products and filtering state
   const [products, setProducts] = useState([]);
@@ -172,8 +174,8 @@ const RentalShopPage = () => {
           <div className="flex items-center justify-between h-16">
             {/* Navigation */}
             <nav className="flex items-center space-x-8">
-              <button 
-                onClick={() => navigate('/')}
+              <button
+                onClick={() => navigate('/products')}
                 className="text-gray-900 hover:text-blue-600 transition-colors"
               >
                 Home
@@ -438,9 +440,22 @@ const RentalShopPage = () => {
                         <div className="p-4 flex-1">
                           <div className="flex justify-between items-start mb-2">
                             <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                            <button className="text-gray-400 hover:text-red-500 transition-colors">
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            <button
+                              onClick={() => toggleWishlist(product)}
+                              className="text-gray-400 hover:text-red-500 transition-colors"
+                            >
+                              <svg
+                                className={`w-5 h-5 ${isWishlisted(product.id) ? 'text-red-500 fill-current' : ''}`}
+                                fill={isWishlisted(product.id) ? 'currentColor' : 'none'}
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                />
                               </svg>
                             </button>
                           </div>
