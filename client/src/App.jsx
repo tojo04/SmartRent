@@ -112,14 +112,6 @@ function App() {
               }
             />
             <Route
-              path="/rentals"
-              element={
-                <ProtectedRoute requiredRole="customer">
-                  <RentalsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/my-rentals"
               element={
                 <ProtectedRoute requiredRole="customer">
