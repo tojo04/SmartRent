@@ -83,19 +83,19 @@ const LandingPage = () => {
 
   const testimonials = [
     {
-      name: 'Priya Sharma',
+      name: 'Vikash Rao',
       role: 'Event Organizer',
       content: 'SmartRent made organizing my wedding so much easier. I could rent everything from tents to sound systems in one place!',
       rating: 5
     },
     {
-      name: 'Rajesh Kumar',
+      name: 'Teijas Saini',
       role: 'Contractor',
       content: 'As a contractor, I need different tools for different projects. SmartRent saves me thousands in equipment costs.',
       rating: 5
     },
     {
-      name: 'Anita Patel',
+      name: 'Nitish Choubey',
       role: 'Homeowner',
       content: 'Perfect for occasional needs. Why buy expensive tools when you can rent them for a fraction of the cost?',
       rating: 5
@@ -197,15 +197,15 @@ const LandingPage = () => {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">500+</div>
+                <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">50+</div>
                 <div className="text-gray-600 font-medium">Products Available</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-indigo-600 mb-2">10K+</div>
+                <div className="text-3xl md:text-4xl font-bold text-indigo-600 mb-2">20+</div>
                 <div className="text-gray-600 font-medium">Happy Customers</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">50+</div>
+                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">3+</div>
                 <div className="text-gray-600 font-medium">Cities Covered</div>
               </div>
               <div className="text-center">
