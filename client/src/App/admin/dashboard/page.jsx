@@ -39,6 +39,10 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleAddProduct = () => navigate('/admin/products/new');
+  const handleViewOrders = () => navigate('/admin/orders');
+  const handleManageUsers = () => navigate('/admin/users');
+
   const statCards = [
     {
       name: 'Total Users',
@@ -187,7 +191,7 @@ const AdminDashboard = () => {
             <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h3>
             <div className="space-y-4">
               <button
-                onClick={() => navigate('/admin/products/new')}
+                onClick={handleAddProduct}
                 className="w-full flex items-center justify-between px-4 py-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
               >
                 <div className="flex items-center">
@@ -202,7 +206,7 @@ const AdminDashboard = () => {
               </button>
               
               <button
-                onClick={() => navigate('/admin/orders')}
+                onClick={handleViewOrders}
                 className="w-full flex items-center justify-between px-4 py-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
               >
                 <div className="flex items-center">
@@ -217,7 +221,7 @@ const AdminDashboard = () => {
               </button>
               
               <button
-                onClick={() => navigate('/admin/users')}
+                onClick={handleManageUsers}
                 className="w-full flex items-center justify-between px-4 py-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
               >
                 <div className="flex items-center">
