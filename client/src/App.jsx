@@ -19,6 +19,7 @@ import ReviewOrderPage from './App/customer/checkout/review/page';
 import DeliveryPage from './App/customer/checkout/delivery/page';
 import PaymentPage from './App/customer/checkout/payment/page';
 import CheckoutSuccessPage from './App/customer/checkout/success/page';
+import LogoutPage from './pages/LogoutPage';
 
 // Admin Components
 import AdminLayout from './App/admin/layout';
@@ -100,6 +101,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="customer">
                   <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/logout"
+              element={
+                <ProtectedRoute>
+                  <LogoutPage />
                 </ProtectedRoute>
               }
             />
