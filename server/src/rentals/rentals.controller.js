@@ -127,7 +127,7 @@ export const RentalsController = {
       console.error(`❌ Get user rentals failed:`, error.message);
       res.status(500).json({ message: 'Failed to fetch rental history' });
     }
-  }
+  },
 
   // Create formal rental order (admin)
   createOrder: async (req, res) => {

@@ -244,7 +244,7 @@ export const RentalsService = {
     });
     
     return overdueRentals;
-  }
+  },
 
   // Create formal rental order
   async createFormalOrder(orderData, adminUserId) {
