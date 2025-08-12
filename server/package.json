@@ -41,7 +41,8 @@
     "express-rate-limit": "^8.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.1",
-    "nodemailer": "^6.10.1"
+    "nodemailer": "^6.10.1",
+    "razorpay": "^2.9.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",

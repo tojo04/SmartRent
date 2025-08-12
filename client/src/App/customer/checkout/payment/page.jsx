@@ -124,6 +124,21 @@ const PaymentPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const loadRazorpay = () => {
+    return new Promise(resolve => {
+      if (document.getElementById('razorpay-script')) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.id = 'razorpay-script';
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handlePayNow = async () => {
     if (!validatePaymentForm()) {
       // Scroll to first error
@@ -133,46 +148,67 @@ const PaymentPage = () => {
       }
       return;
     }
-    
+
     setLoading(true);
     setError('');
-    
+
     try {
-      // Prepare rental data for backend
-      const rentalData = {
-        productId: cartItem.product.id,
-        startDate: cartItem.startDate,
-        endDate: cartItem.endDate,
-        notes: cartItem.notes || '',
-        paymentMethod: paymentMethod,
-        deliveryAddress: cartItem.deliveryAddress,
-        invoiceAddress: cartItem.invoiceAddress,
-        deliveryMethod: cartItem.deliveryMethod,
-        appliedCoupon: cartItem.appliedCoupon,
-        finalTotal: cartItem.finalTotal || cartItem.pricing.total
+      const { data } = await api.post('/payments/razorpay/order', { amount: finalTotal });
+
+      const scriptLoaded = await loadRazorpay();
+      if (!scriptLoaded) {
+        setError('Unable to load payment gateway. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      const options = {
+        key: data.key,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'SmartRent',
+        description: 'Rental Payment',
+        order_id: data.orderId,
+        prefill: { name: user?.name, email: user?.email },
+        handler: async () => {
+          try {
+            const rentalData = {
+              productId: cartItem.product.id,
+              startDate: cartItem.startDate,
+              endDate: cartItem.endDate,
+              notes: cartItem.notes || '',
+              paymentMethod: paymentMethod,
+              deliveryAddress: cartItem.deliveryAddress,
+              invoiceAddress: cartItem.invoiceAddress,
+              deliveryMethod: cartItem.deliveryMethod,
+              appliedCoupon: cartItem.appliedCoupon,
+              finalTotal: cartItem.finalTotal || cartItem.pricing.total
+            };
+            const response = await api.post('/rentals', rentalData);
+            localStorage.removeItem('pendingRental');
+            navigate('/checkout/success', {
+              state: {
+                rental: response.data.rental,
+                orderDetails: cartItem
+              }
+            });
+          } catch (err) {
+            console.error('Failed to create rental:', err);
+            setError(err.response?.data?.message || 'Payment processed but order creation failed.');
+          } finally {
+            setLoading(false);
+          }
+        },
       };
-      
-      // Create the rental order
-      const response = await api.post('/rentals', rentalData);
-      
-      // Clear pending rental from localStorage
-      localStorage.removeItem('pendingRental');
-      
-      // Show success and redirect
-      console.log('Rental created successfully:', response.data.rental);
-      
-      // Simulate payment processing
-      setTimeout(() => {
-        navigate('/checkout/success', { 
-          state: { 
-            rental: response.data.rental,
-            orderDetails: cartItem
-          } 
-        });
-      }, 2000);
-      
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        setError(response.error?.description || 'Payment failed. Please try again.');
+        setLoading(false);
+      });
+      rzp.open();
     } catch (error) {
-      console.error('Failed to create rental:', error);
+      console.error('Payment initiation failed:', error);
       setError(error.response?.data?.message || 'Payment failed. Please try again.');
       setLoading(false);
     }
