@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { useWishlist } from '../../../../contexts/WishlistContext';
 import api from '../../../../lib/api';
 
 const ProductDetailsPage = () => {
   const { productId } = useParams();
   const { user } = useAuth();
+  const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
   
   // Product and rental state
@@ -188,8 +190,9 @@ const ProductDetailsPage = () => {
   };
 
   const handleWishlist = () => {
-    // Implement wishlist functionality
-    console.log('Added to wishlist:', product?.name);
+    if (product) {
+      toggleWishlist(product);
+    }
   };
 
   const getProductImage = (product, index = 0) => {
@@ -297,12 +300,27 @@ const ProductDetailsPage = () => {
               <div className="p-4">
                 <button
                   onClick={handleWishlist}
-                  className="w-full border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-full font-medium hover:border-blue-600 hover:text-blue-600 transition-colors flex items-center justify-center space-x-2"
+                  className={`w-full border-2 py-3 px-6 rounded-full font-medium transition-colors flex items-center justify-center space-x-2 ${
+                    isWishlisted(product?.id)
+                      ? 'border-red-500 text-red-500'
+                      : 'border-gray-300 text-gray-700 hover:border-blue-600 hover:text-blue-600'
+                  }`}
+                  aria-label="Wishlist"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill={isWishlisted(product?.id) ? 'currentColor' : 'none'}
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
                   </svg>
-                  <span>Add to wish list</span>
+                  <span>{isWishlisted(product?.id) ? 'Remove from wish list' : 'Add to wish list'}</span>
                 </button>
               </div>
             </div>

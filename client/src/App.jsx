@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { WishlistProvider } from './contexts/WishlistContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './App/auth/login/page';
 import SignupPage from './App/auth/signup/page';
@@ -17,6 +18,7 @@ import ReviewOrderPage from './App/customer/checkout/review/page';
 import DeliveryPage from './App/customer/checkout/delivery/page';
 import PaymentPage from './App/customer/checkout/payment/page';
 import CheckoutSuccessPage from './App/customer/checkout/success/page';
+import WishlistPage from './App/customer/wishlist/page';
 
 // Admin Components
 import AdminLayout from './App/admin/layout';
@@ -29,8 +31,9 @@ import AdminOrders from './App/admin/orders/page';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="App">
+      <WishlistProvider>
+        <Router>
+          <div className="App">
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -116,6 +119,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <WishlistPage />
+                </ProtectedRoute>
+              }
+            />
             
             {/* Admin only routes */}
             <Route
@@ -135,13 +146,14 @@ function App() {
             </Route>
             
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/products" replace />} />
-            
+            <Route path="/" element={<Navigate to="/login" replace />} />
+
             {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/products" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
-      </Router>
+        </Router>
+      </WishlistProvider>
     </AuthProvider>
   );
 }
