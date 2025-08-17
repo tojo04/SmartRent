@@ -147,13 +147,48 @@ export const RentalsController = {
   generatePDF: async (req, res) => {
     try {
       const { id } = req.params;
-      const orderData = req.body;
+      const orderData = req.body || {};
+      
+      console.log(`📄 Generating PDF for rental: ${id}`);
       
       const result = await RentalsService.generatePDFInvoice(id, orderData);
-      res.json({ success: true, message: 'PDF generated and sent successfully' });
+      
+      res.json({ 
+        success: true, 
+        message: result.message,
+        filename: result.filename
+      });
     } catch (error) {
-      console.error('Failed to generate PDF:', error);
-      res.status(500).json({ message: error.message });
+      console.error('❌ PDF generation failed:', error.message);
+      res.status(500).json({ 
+        success: false, 
+        message: error.message || 'Failed to generate PDF'
+      });
+    }
+  },
+
+  // Generate and download PDF receipt
+  downloadPDF: async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      console.log(`📥 Generating PDF download for rental: ${id}`);
+      
+      const result = await RentalsService.generateRentalReceipt(id);
+      
+      // Set headers for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+      res.setHeader('Content-Length', result.pdfBuffer.length);
+      
+      // Send PDF buffer
+      res.send(result.pdfBuffer);
+    } catch (error) {
+      console.error('❌ PDF download failed:', error.message);
+      res.status(500).json({ 
+        success: false, 
+        message: error.message || 'Failed to download PDF'
+      });
     }
   }
 };

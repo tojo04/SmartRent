@@ -243,10 +243,17 @@ const AdminRentalsPage = () => {
                         Create Order
                       </button>
                       <button 
+                        data-rental-id={rental.id}
                         onClick={() => handleGeneratePDF(rental)}
                         className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-xs font-medium transition-colors"
                       >
                         Generate PDF
+                      </button>
+                      <button 
+                        onClick={() => handleDownloadPDF(rental)}
+                        className="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1 rounded-md text-xs font-medium transition-colors"
+                      >
+                        Download
                       </button>
                     </div>
                   </td>

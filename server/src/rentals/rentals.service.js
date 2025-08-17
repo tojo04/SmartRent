@@ -273,7 +273,7 @@ export const RentalsService = {
   },
 
   // Generate PDF invoice and send via email
-  async generatePDFInvoice(rentalId, orderData) {
+  async generatePDFInvoice(rentalId, orderData = {}) {
     const rental = await prisma.rental.findUnique({
       where: { id: rentalId },
       include: { product: true }
@@ -283,17 +283,68 @@ export const RentalsService = {
       throw new Error('Rental not found');
     }
     
-    // Generate PDF
-    const pdfBuffer = await PDFService.generateRentalInvoice(rental, orderData);
+    try {
+      // Generate PDF
+      const pdfBuffer = await PDFService.generateRentalInvoice(rental, orderData);
+      
+      // Save PDF to file system for potential download
+      const filename = `rental_invoice_R${rental.id.slice(0, 6)}_${Date.now()}.pdf`;
+      const filePath = await PDFService.savePDFToFile(pdfBuffer, filename);
+      
+      console.log(`📄 PDF generated: ${filename}`);
+      console.log(`📁 Saved to: ${filePath}`);
+      
+      // Send email with PDF attachment
+      await NotificationsService.sendRentalInvoice(
+        rental.userEmail,
+        rental.userName,
+        pdfBuffer,
+        `R${rental.id.slice(0, 6)}`
+      );
+      
+      return { 
+        success: true, 
+        filename,
+        filePath,
+        message: 'PDF generated and sent to customer successfully'
+      };
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      throw new Error(`Failed to generate PDF: ${error.message}`);
+    }
+  },
+
+  // Generate simple rental receipt PDF
+  async generateRentalReceipt(rentalId) {
+    const rental = await prisma.rental.findUnique({
+      where: { id: rentalId },
+      include: { product: true }
+    });
     
-    // Send email with PDF attachment
-    await NotificationsService.sendRentalInvoice(
-      rental.userEmail,
-      rental.userName,
-      pdfBuffer,
-      `R${rental.id.slice(0, 6)}`
-    );
+    if (!rental) {
+      throw new Error('Rental not found');
+    }
     
-    return { success: true };
+    try {
+      // Generate PDF receipt
+      const pdfBuffer = await PDFService.generateRentalReceipt(rental);
+      
+      // Save PDF to file system
+      const filename = `rental_receipt_R${rental.id.slice(0, 6)}_${Date.now()}.pdf`;
+      const filePath = await PDFService.savePDFToFile(pdfBuffer, filename);
+      
+      console.log(`📄 Receipt PDF generated: ${filename}`);
+      
+      return { 
+        success: true, 
+        filename,
+        filePath,
+        pdfBuffer,
+        message: 'Receipt PDF generated successfully'
+      };
+    } catch (error) {
+      console.error('Receipt PDF generation error:', error);
+      throw new Error(`Failed to generate receipt PDF: ${error.message}`);
+    }
   }
 };
