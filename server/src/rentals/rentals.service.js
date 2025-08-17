@@ -1,6 +1,6 @@
 import { prisma } from '../db/postgres.js';
 import { PDFService } from './pdf.service.js';
-import { NotificationsService } from '../notifications/notifications.service.js';
+import  NotificationsService  from '../notifications/notifications.service.js';
 
 // Helper to serialize decimal fields
 const serialize = (rental) => rental && ({
@@ -272,12 +272,9 @@ export const RentalsService = {
     return serialize(updatedRental);
   },
 
-  // Generate PDF invoice and send via email
+  // ** FIXED: Generate PDF invoice and return the buffer **
   async generatePDFInvoice(rentalId, orderData = {}) {
-    const rental = await prisma.rental.findUnique({
-      where: { id: rentalId },
-      include: { product: true }
-    });
+    const rental = await this.getById(rentalId);
     
     if (!rental) {
       throw new Error('Rental not found');
@@ -287,39 +284,24 @@ export const RentalsService = {
       // Generate PDF
       const pdfBuffer = await PDFService.generateRentalInvoice(rental, orderData);
       
-      // Save PDF to file system for potential download
-      const filename = `rental_invoice_R${rental.id.slice(0, 6)}_${Date.now()}.pdf`;
-      const filePath = await PDFService.savePDFToFile(pdfBuffer, filename);
+      const filename = `rental_invoice_${rental.id}.pdf`;
       
-      console.log(`📄 PDF generated: ${filename}`);
-      console.log(`📁 Saved to: ${filePath}`);
+      // You can still save the file if you want a record of it
+      await PDFService.savePDFToFile(pdfBuffer, filename);
+      console.log(`📄 PDF generated and saved: ${filename}`);
       
-      // Send email with PDF attachment
-      await NotificationsService.sendRentalInvoice(
-        rental.userEmail,
-        rental.userName,
-        pdfBuffer,
-        `R${rental.id.slice(0, 6)}`
-      );
-      
-      return { 
-        success: true, 
-        filename,
-        filePath,
-        message: 'PDF generated and sent to customer successfully'
-      };
+      // ** CRUCIAL: Return the buffer and filename to the controller **
+      return { pdfBuffer, filename };
+
     } catch (error) {
       console.error('PDF generation error:', error);
       throw new Error(`Failed to generate PDF: ${error.message}`);
     }
   },
 
-  // Generate simple rental receipt PDF
+  // ** FIXED: Generate simple rental receipt PDF and return the buffer **
   async generateRentalReceipt(rentalId) {
-    const rental = await prisma.rental.findUnique({
-      where: { id: rentalId },
-      include: { product: true }
-    });
+    const rental = await this.getById(rentalId);
     
     if (!rental) {
       throw new Error('Rental not found');
@@ -329,19 +311,15 @@ export const RentalsService = {
       // Generate PDF receipt
       const pdfBuffer = await PDFService.generateRentalReceipt(rental);
       
-      // Save PDF to file system
-      const filename = `rental_receipt_R${rental.id.slice(0, 6)}_${Date.now()}.pdf`;
-      const filePath = await PDFService.savePDFToFile(pdfBuffer, filename);
+      const filename = `rental_receipt_${rental.id}.pdf`;
       
-      console.log(`📄 Receipt PDF generated: ${filename}`);
+      // You can still save the file if you want a record of it
+      await PDFService.savePDFToFile(pdfBuffer, filename);
+      console.log(`📄 Receipt PDF generated and saved: ${filename}`);
       
-      return { 
-        success: true, 
-        filename,
-        filePath,
-        pdfBuffer,
-        message: 'Receipt PDF generated successfully'
-      };
+      // ** CRUCIAL: Return the buffer and filename to the controller **
+      return { pdfBuffer, filename };
+
     } catch (error) {
       console.error('Receipt PDF generation error:', error);
       throw new Error(`Failed to generate receipt PDF: ${error.message}`);

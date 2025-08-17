@@ -1,4 +1,5 @@
 import { RentalsService } from './rentals.service.js';
+// No other imports are needed here, the service handles everything.
 
 export const RentalsController = {
   // Create a new rental (customer)
@@ -65,7 +66,7 @@ export const RentalsController = {
       }
       
       // Check permissions - users can only see their own rentals
-      if (user.role !== 'admin' && rental.userId !== user.id) {
+      if (user.role !== 'admin' && rental.userId.toString() !== user.id) {
         return res.status(403).json({ message: 'Access denied' });
       }
       
@@ -143,23 +144,36 @@ export const RentalsController = {
     }
   },
 
-  // Generate PDF invoice
+  // ** ADDED LOGGING: Generate PDF and send the file to the browser **
   generatePDF: async (req, res) => {
     try {
       const { id } = req.params;
       const orderData = req.body || {};
       
-      console.log(`📄 Generating PDF for rental: ${id}`);
+      console.log(`[Controller] 📄 Generating PDF for rental: ${id}`);
       
+      // The service now returns the PDF data directly
       const result = await RentalsService.generatePDFInvoice(id, orderData);
       
-      res.json({ 
-        success: true, 
-        message: result.message,
-        filename: result.filename
-      });
+      if (!result || !result.pdfBuffer || !result.filename) {
+        console.error('[Controller] ❌ Service did not return valid PDF data.');
+        return res.status(500).json({ message: 'Failed to get PDF data from service.' });
+      }
+      
+      const { pdfBuffer, filename } = result;
+      
+      console.log(`[Controller] ✅ PDF data received. Buffer size: ${pdfBuffer.length} bytes. Filename: ${filename}`);
+
+      // Set the correct headers to trigger a download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      
+      console.log('[Controller] 🚀 Sending PDF to browser...');
+      // Send the actual PDF data in the response
+      res.send(pdfBuffer);
+
     } catch (error) {
-      console.error('❌ PDF generation failed:', error.message);
+      console.error('[Controller] ❌ PDF generation failed:', error.message);
       res.status(500).json({ 
         success: false, 
         message: error.message || 'Failed to generate PDF'
@@ -172,19 +186,26 @@ export const RentalsController = {
     try {
       const { id } = req.params;
       
-      console.log(`📥 Generating PDF download for rental: ${id}`);
+      console.log(`[Controller] 📥 Generating PDF download for rental: ${id}`);
       
-      const result = await RentalsService.generateRentalReceipt(id);
+      const { pdfBuffer, filename } = await RentalsService.generateRentalReceipt(id);
+      
+      if (!pdfBuffer || !filename) {
+        console.error('[Controller] ❌ Service did not return valid PDF receipt data.');
+        return res.status(500).json({ message: 'Failed to get PDF receipt data from service.' });
+      }
+      
+      console.log(`[Controller] ✅ PDF receipt data received. Buffer size: ${pdfBuffer.length} bytes. Filename: ${filename}`);
       
       // Set headers for PDF download
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
-      res.setHeader('Content-Length', result.pdfBuffer.length);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       
+      console.log('[Controller] 🚀 Sending PDF receipt to browser...');
       // Send PDF buffer
-      res.send(result.pdfBuffer);
+      res.send(pdfBuffer);
     } catch (error) {
-      console.error('❌ PDF download failed:', error.message);
+      console.error('[Controller] ❌ PDF download failed:', error.message);
       res.status(500).json({ 
         success: false, 
         message: error.message || 'Failed to download PDF'

@@ -35,17 +35,60 @@ const AdminRentalsPage = () => {
     setShowCreateForm(true);
   };
 
+  // ** FIXED: This function now handles the file download correctly **
   const handleGeneratePDF = async (rental) => {
     try {
-      const response = await api.post(`/rentals/${rental.id}/generate-pdf`);
-      if (response.data.success) {
-        alert('PDF generated and sent to customer successfully!');
-      }
+      // 1. Call the API, specifying that the expected response is a 'blob' (a file)
+      const response = await api.post(`/rentals/${rental.id}/generate-pdf`, {}, {
+        responseType: 'blob', 
+      });
+
+      // 2. Create a blob from the response
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+
+      // 3. Create a temporary URL for the blob
+      const url = window.URL.createObjectURL(pdfBlob);
+      
+      // 4. Create a temporary link to trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `rental_invoice_${rental.id}.pdf`; // Set the download filename
+      document.body.appendChild(a);
+      
+      // 5. Click the link and then remove it
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
     } catch (error) {
       console.error('Failed to generate PDF:', error);
       alert('Failed to generate PDF. Please try again.');
     }
   };
+
+  // ** ADDED: A similar function for the download button **
+  const handleDownloadPDF = async (rental) => {
+    try {
+      const response = await api.get(`/rentals/${rental.id}/download-pdf`, {
+        responseType: 'blob',
+      });
+
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `rental_receipt_${rental.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error('Failed to download PDF:', error);
+      alert('Failed to download PDF. Please try again.');
+    }
+  };
+
 
   const getStatusBadgeColor = (status) => {
     switch (status) {
@@ -419,11 +462,20 @@ const RentalOrderFormModal = ({ rental, onClose, onSuccess }) => {
         total
       };
 
-      const response = await api.post(`/rentals/${rental.id}/generate-pdf`, orderData);
+      const response = await api.post(`/rentals/${rental.id}/generate-pdf`, orderData, {
+        responseType: 'blob',
+      });
       
-      if (response.data.success) {
-        alert('PDF generated and sent to customer successfully!');
-      }
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `rental_invoice_${rental.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
     } catch (error) {
       console.error('Failed to generate PDF:', error);
       alert('Failed to generate PDF. Please try again.');
