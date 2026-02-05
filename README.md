@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 SmartRent
+#  SmartRent
 
 ### *Real-Time Rental Management Platform*
 
@@ -15,27 +15,27 @@
 
 </div>
 
-## 👥 **Team Soul_Society**
+##  **Team Soul_Society**
 
 <table align="center">
 <tr>
-<td align="center"><strong>🎯 Teijas Saini</strong><br><em>Team Lead</em></td>
-<td align="center"><strong>💻 Rushil Jain</strong><br><em>Developer</em></td>
-<td align="center"><strong>⚡ Vikash</strong><br><em>Developer</em></td>
-<td align="center"><strong>🔧 Nitish Choubey</strong><br><em>Developer</em></td>
+<td align="center"><strong> Teijas Saini</strong><br><em>Team Lead</em></td>
+<td align="center"><strong> Rushil Jain</strong><br><em>Developer</em></td>
+<td align="center"><strong> Vikash</strong><br><em>Developer</em></td>
+<td align="center"><strong> Nitish Choubey</strong><br><em>Developer</em></td>
 </tr>
 </table>
 
 ---
 
-## 📌 **Project Overview**
+##  **Project Overview**
 
 **SmartRent** is a comprehensive full-stack rental management platform that revolutionizes how businesses and customers interact in the rental ecosystem. Built with modern technologies, it provides real-time inventory management, seamless booking experiences, and automated workflows.
 
 ### **Video Link** - 
 https://youtu.be/l3mLkUDyNRA
 
-### **🎯 What Makes SmartRent Special?**
+### ** What Makes SmartRent Special?**
 
 ✅ **Dual-Role Architecture** - Separate experiences for customers and admins  
 ✅ **Real-Time Availability** - Prevents double-bookings with live inventory tracking  
@@ -46,7 +46,7 @@ https://youtu.be/l3mLkUDyNRA
 
 ---
 
-## 🛠️ **Technology Stack**
+##  **Technology Stack**
 
 <div align="center">
 
@@ -73,17 +73,17 @@ https://youtu.be/l3mLkUDyNRA
 
 ---
 
-## ⚡ **Core Features**
+##  **Core Features**
 
 <div align="center">
 
-| 🔐 **Authentication & Security** | 🏪 **Product Management** | 💳 **Payment Integration** |
+|  **Authentication & Security** |  **Product Management** | **Payment Integration** |
 |:---:|:---:|:---:|
 | JWT-based authentication | Real-time inventory tracking | Secure Razorpay integration |
 | Role-based access control | Multi-category product catalog | Multiple payment methods |
 | Email verification & OTP | Image upload & management | Automated invoice generation |
 
-| 📅 **Booking System** | 📊 **Analytics & Reports** | 🔔 **Notifications** |
+|  **Booking System** |  **Analytics & Reports** |  **Notifications** |
 |:---:|:---:|:---:|
 | Date range selection | Revenue analytics | Email notifications |
 | Availability checking | Customer insights | Automated reminders |
@@ -91,27 +91,27 @@ https://youtu.be/l3mLkUDyNRA
 
 </div>
 
-### **🎯 User Experiences**
+### ** User Experiences**
 
-**👤 Customer Journey:**
-- 🔍 Browse comprehensive product catalog with advanced filtering
-- 📅 Select rental dates with real-time availability checking
-- 💰 Get instant pricing calculations for different durations
-- 💳 Secure online payment processing
-- 📱 Track orders and manage rental history
-- 📧 Receive automated notifications and reminders
+** Customer Journey:**
+-  Browse comprehensive product catalog with advanced filtering
+-  Select rental dates with real-time availability checking
+-  Get instant pricing calculations for different durations
+-  Secure online payment processing
+-  Track orders and manage rental history
+-  Receive automated notifications and reminders
 
-**👨‍💼 Admin Dashboard:**
-- 📦 Complete product lifecycle management
-- 💹 Dynamic pricing and discount configuration
-- 📋 Order processing and fulfillment tracking
-- 👥 Customer relationship management
-- 📈 Comprehensive analytics and reporting
-- ⚙️ System configuration and settings
+** Admin Dashboard:**
+-  Complete product lifecycle management
+-  Dynamic pricing and discount configuration
+-  Order processing and fulfillment tracking
+-  Customer relationship management
+-  Comprehensive analytics and reporting
+-  System configuration and settings
 
 ---
 
-## 📁 **Project Architecture**
+##  **Project Architecture**
 
 ```
 SmartRent/
@@ -217,9 +217,9 @@ SmartRent/
 
 ---
 
-## 🚀 **Quick Start Guide**
+##  **Quick Start Guide**
 
-### **📋 Prerequisites**
+### ** Prerequisites**
 ```bash
 Node.js >= 18.0.0
 MongoDB >= 5.0
@@ -227,7 +227,7 @@ PostgreSQL >= 13.0
 npm >= 8.0.0
 ```
 
-### **⚙️ Environment Setup**
+### ** Environment Setup**
 
 1. **Clone the repository**
    ```bash
@@ -256,7 +256,7 @@ npm >= 8.0.0
    npm run test-backend    # Verifies setup
    ```
 
-### **🚀 Launch Application**
+### ** Launch Application**
 
 **Start Backend (Port 4000):**
 ```bash
@@ -270,103 +270,36 @@ cd client
 npm run dev
 ```
 
-**🎉 Access the application:**
+** Access the application:**
 - **Frontend:** `http://localhost:5173`
 - **Admin Login:** `admin@smartrent.com` / `admin123`
 
 ---
 
-## 🎯 **Development Roadmap**
-
-<div align="center">
-
-| Phase | Feature | Status |
-|:---:|:---|:---:|
-| **Phase 1** | 🔐 Authentication & User Management | ✅ Complete |
-| **Phase 2** | 📦 Product Catalog & Inventory | ✅ Complete |
-| **Phase 3** | 🛒 Booking & Cart System | ✅ Complete |
-| **Phase 4** | 💳 Payment Integration (Razorpay) | ✅ Complete |
-| **Phase 5** | 📊 Analytics & Reporting | 🔜 In Progress|
-| **Phase 6** | 🔔 Notification System | 🔜 In Progress |
-| **Phase 7** | 📱 Mobile Responsiveness | 🔜 In Progress |
-| **Phase 8** | 🧪 Testing & Bug Fixes | 🔜 In Progress |
-
-</div>
 
 <!-- ---
 
-## 📊 **Performance Metrics**
+##  **Performance Metrics**
 
 <div align="center">
 
 | Metric | Value | Target |
 |:---|:---:|:---:|
-| 🚀 **Page Load Time** | < 2s | ✅ |
-| 📱 **Mobile Responsive** | 100% | ✅ |
-| 🔍 **SEO Score** | 95/100 | ✅ |
-| 🛡️ **Security Grade** | A+ | ✅ |
-| ⚡ **API Response Time** | < 500ms | ✅ |
+|  **Page Load Time** | < 2s | ✅ |
+|  **Mobile Responsive** | 100% | ✅ |
+|  **SEO Score** | 95/100 | ✅ |
+|  **Security Grade** | A+ | ✅ |
+|  **API Response Time** | < 500ms | ✅ |
 
 </div> -->
 
 ---
 
-## 🎨 **Key Functionality Highlights**
 
-### **🔧 Admin Features**
-- **Product Management**: Create, edit, delete products with image uploads
-- **Order Management**: View, process, and track customer orders
-- **User Management**: Manage customer accounts and permissions
-- **Analytics Dashboard**: Real-time metrics and revenue tracking
-- **Pricing Control**: Dynamic pricing rules and discount management
 
-### **👤 Customer Features**
-- **Product Browsing**: Advanced search and filtering capabilities
-- **Rental Booking**: Date selection with availability checking
-- **Secure Checkout**: Multiple payment options via Razorpay
-- **Order Tracking**: Real-time status updates and history
-- **Wishlist**: Save products for future consideration
 
-### **🔒 Security Features**
-- **JWT Authentication**: Secure token-based authentication
-- **Role-based Access**: Granular permission control
-- **Data Validation**: Input sanitization and validation
-- **Rate Limiting**: API abuse prevention
-- **Secure Payments**: PCI-compliant payment processing
 
----
 
-## 🤝 **Contributing**
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-### **Development Workflow:**
-1. 🍴 Fork the repository
-2. 🌿 Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. 💾 Commit your changes (`git commit -m 'Add amazing feature'`)
-4. 📤 Push to the branch (`git push origin feature/amazing-feature`)
-5. 🔄 Open a Pull Request
-
----
-
-## 📞 **Support & Documentation**
-
-- 📖 **Setup Guide:** [`COMPLETE_SETUP_GUIDE.md`](COMPLETE_SETUP_GUIDE.md)
-- 🔧 **Troubleshooting:** [`FIXES_SUMMARY.md`](FIXES_SUMMARY.md)
-- 🔐 **Authentication:** [`AUTH_FLOW_GUIDE.md`](AUTH_FLOW_GUIDE.md)
-- 🩺 **Diagnostics:** [`LOGIN_DIAGNOSIS.md`](LOGIN_DIAGNOSIS.md)
-
----
-
-## 📄 **License**
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-### **🌟 Star this repository if you found it helpful!**
 
 **Built with ❤️ by Team Soul_Society**
 
