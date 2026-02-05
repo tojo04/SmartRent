@@ -35,7 +35,7 @@
 ### **Video Link** - 
 https://youtu.be/l3mLkUDyNRA
 
-### ** What Makes SmartRent Special?**
+### **What Makes SmartRent Special?**
 
 ✅ **Dual-Role Architecture** - Separate experiences for customers and admins  
 ✅ **Real-Time Availability** - Prevents double-bookings with live inventory tracking  
@@ -83,17 +83,12 @@ https://youtu.be/l3mLkUDyNRA
 | Role-based access control | Multi-category product catalog | Multiple payment methods |
 | Email verification & OTP | Image upload & management | Automated invoice generation |
 
-|  **Booking System** |  **Analytics & Reports** |  **Notifications** |
-|:---:|:---:|:---:|
-| Date range selection | Revenue analytics | Email notifications |
-| Availability checking | Customer insights | Automated reminders |
-| Booking confirmations | Export capabilities | Order status updates |
 
 </div>
 
-### ** User Experiences**
+### **User Experiences**
 
-** Customer Journey:**
+**Customer Journey:**
 -  Browse comprehensive product catalog with advanced filtering
 -  Select rental dates with real-time availability checking
 -  Get instant pricing calculations for different durations
@@ -101,7 +96,7 @@ https://youtu.be/l3mLkUDyNRA
 -  Track orders and manage rental history
 -  Receive automated notifications and reminders
 
-** Admin Dashboard:**
+**Admin Dashboard:**
 -  Complete product lifecycle management
 -  Dynamic pricing and discount configuration
 -  Order processing and fulfillment tracking
@@ -219,7 +214,7 @@ SmartRent/
 
 ##  **Quick Start Guide**
 
-### ** Prerequisites**
+### **Prerequisites**
 ```bash
 Node.js >= 18.0.0
 MongoDB >= 5.0
@@ -227,7 +222,7 @@ PostgreSQL >= 13.0
 npm >= 8.0.0
 ```
 
-### ** Environment Setup**
+### **Environment Setup**
 
 1. **Clone the repository**
    ```bash
@@ -256,7 +251,7 @@ npm >= 8.0.0
    npm run test-backend    # Verifies setup
    ```
 
-### ** Launch Application**
+### **Launch Application**
 
 **Start Backend (Port 4000):**
 ```bash
@@ -270,7 +265,7 @@ cd client
 npm run dev
 ```
 
-** Access the application:**
+**Access the application:**
 - **Frontend:** `http://localhost:5173`
 - **Admin Login:** `admin@smartrent.com` / `admin123`
 
@@ -285,11 +280,11 @@ npm run dev
 
 | Metric | Value | Target |
 |:---|:---:|:---:|
-|  **Page Load Time** | < 2s | ✅ |
-|  **Mobile Responsive** | 100% | ✅ |
-|  **SEO Score** | 95/100 | ✅ |
-|  **Security Grade** | A+ | ✅ |
-|  **API Response Time** | < 500ms | ✅ |
+|  **Page Load Time** | < 2s | 
+|  **Mobile Responsive** | 100% | 
+|  **SEO Score** | 95/100 | 
+|  **Security Grade** | A+ | 
+|  **API Response Time** | < 500ms  |
 
 </div> -->
 
